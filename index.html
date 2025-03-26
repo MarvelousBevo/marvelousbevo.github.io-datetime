@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -22,6 +23,60 @@
             font-size: 1.5rem;
             margin-top: 10px;
         }
+        .toggle-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* Add spacing between toggle items */
+        }
+        .toggle-item span {
+            margin-left: 30px; /* Keep spacing between the switch and its label */
+        }
+        /* Toggle switch styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            margin-left: -100px; /* Shift the switch to the left by 30px */
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 24px;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s;
+        }
+        .slider::before {
+            content: "";
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle-switch input:checked + .slider {
+            background-color: #4caf50;
+        }
+        .toggle-switch input:checked + .slider::before {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 <body>
@@ -29,17 +84,65 @@
         <div class="date" id="date"></div>
         <div class="clock" id="clock"></div>
     </div>
+    <div class="toggle-container">
+        <div class="toggle-item">
+            <label class="toggle-switch">
+                <input type="checkbox" id="show-centiseconds" />
+                <span class="slider"></span>
+            </label>
+            <span>Show Centiseconds</span>
+        </div>
+        <div class="toggle-item">
+            <label class="toggle-switch">
+                <input type="checkbox" id="use-24-hour-format" />
+                <span class="slider"></span>
+            </label>
+            <span>Use 24-Hour Format</span>
+        </div>
+    </div>
     <script>
+        let showCentiseconds = false;
+        let use24HourFormat = false;
+
+        // Update logic for centiseconds
+        document.getElementById('show-centiseconds').addEventListener('change', function () {
+            showCentiseconds = this.checked; // Show centiseconds when checked
+        });
+
+        // Update logic for hour format
+        document.getElementById('use-24-hour-format').addEventListener('change', function () {
+            use24HourFormat = this.checked; // Use 24-hour format when checked
+        });
+
         function updateClock() {
             let now = new Date();
             let date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            let time = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + `.${now.getMilliseconds()}`;
-            
+            let hours = now.getHours();
+            let period = '';
+
+            if (!use24HourFormat) {
+                period = hours >= 12 ? ' PM' : ' AM';
+                hours = hours % 12 || 12; // Convert to 12-hour format
+            }
+
+            hours = String(hours).padStart(2, '0');
+            let minutes = String(now.getMinutes()).padStart(2, '0');
+            let seconds = String(now.getSeconds()).padStart(2, '0');
+            let centiseconds = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
+
+            let time = `${hours}:${minutes}:${seconds}`;
+            if (showCentiseconds) {
+                time += `.${centiseconds}`;
+            }
+            time += period;
+
             document.getElementById('date').textContent = date;
             document.getElementById('clock').textContent = time;
+
+            requestAnimationFrame(updateClock);
         }
-        
-        setInterval(updateClock, 1);
+
+        // Start the clock
         updateClock();
     </script>
 </body>
