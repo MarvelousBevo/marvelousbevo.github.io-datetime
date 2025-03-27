@@ -6,7 +6,7 @@
     <title>Live Clock</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Consolas', 'Courier New', monospace; /* Monospaced font for all text */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -43,7 +43,6 @@
             display: inline-block;
             width: 50px;
             height: 24px;
-            
         }
         .toggle-switch input {
             opacity: 0;
@@ -102,6 +101,13 @@
         </div>
         <div class="toggle-item">
             <label class="toggle-switch">
+                <input type="checkbox" id="show-deciseconds" />
+                <span class="slider"></span>
+            </label>
+            <span>Show Deciseconds</span>
+        </div>
+        <div class="toggle-item">
+            <label class="toggle-switch">
                 <input type="checkbox" id="use-24-hour-format" />
                 <span class="slider"></span>
             </label>
@@ -111,6 +117,7 @@
     <script>
         let showMilliseconds = false;
         let showCentiseconds = false;
+        let showDeciseconds = false; // New toggle state
         let use24HourFormat = false;
 
         // Update logic for milliseconds
@@ -118,7 +125,9 @@
             showMilliseconds = this.checked;
             if (showMilliseconds) {
                 document.getElementById('show-centiseconds').checked = false;
+                document.getElementById('show-deciseconds').checked = false;
                 showCentiseconds = false;
+                showDeciseconds = false;
             }
         });
 
@@ -127,7 +136,20 @@
             showCentiseconds = this.checked;
             if (showCentiseconds) {
                 document.getElementById('show-milliseconds').checked = false;
+                document.getElementById('show-deciseconds').checked = false;
                 showMilliseconds = false;
+                showDeciseconds = false;
+            }
+        });
+
+        // Update logic for deciseconds
+        document.getElementById('show-deciseconds').addEventListener('change', function () {
+            showDeciseconds = this.checked;
+            if (showDeciseconds) {
+                document.getElementById('show-milliseconds').checked = false;
+                document.getElementById('show-centiseconds').checked = false;
+                showMilliseconds = false;
+                showCentiseconds = false;
             }
         });
 
@@ -152,12 +174,15 @@
             let seconds = String(now.getSeconds()).padStart(2, '0');
             let milliseconds = String(now.getMilliseconds()).padStart(3, '0');
             let centiseconds = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
+            let deciseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0'); // Calculate deciseconds
 
             let time = `${hours}:${minutes}:${seconds}`;
             if (showMilliseconds) {
                 time += `.${milliseconds}`;
             } else if (showCentiseconds) {
                 time += `.${centiseconds}`;
+            } else if (showDeciseconds) {
+                time += `.${deciseconds}`;
             }
             time += period;
 
