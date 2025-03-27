@@ -26,16 +26,16 @@
         .toggle-container {
             margin-top: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: column; /* Align items vertically */
+            align-items: flex-start; /* Align items to the left */
+            gap: 10px; /* Add spacing between toggle items */
         }
         .toggle-item {
             display: flex;
             align-items: center;
-            margin-bottom: 10px; /* Add spacing between toggle items */
         }
         .toggle-item span {
-            margin-left: 30px; /* Keep spacing between the switch and its label */
+            margin-left: 10px; /* Adjust spacing between the toggle switch and its label */
         }
         /* Toggle switch styles */
         .toggle-switch {
@@ -65,17 +65,18 @@
             position: absolute;
             height: 20px;
             width: 20px;
-            left: 4px;
+            left: 2px; /* Move the circle 2px to the left */
             bottom: 2px;
             background-color: white;
             border-radius: 50%;
-            transition: transform 0.3s;
+            transition: transform 0.3s, left 0.3s; /* Smooth transition for left property */
         }
         .toggle-switch input:checked + .slider {
-            background-color: #4caf50;
+            background-color: #ff4d4d; /* Red accent color */
         }
         .toggle-switch input:checked + .slider::before {
-            transform: translateX(26px);
+            background-color: #ffcccc; /* Light red for the toggle knob */
+            transform: translateX(26px); /* Move the knob to the right */
         }
     </style>
 </head>
@@ -85,6 +86,13 @@
         <div class="clock" id="clock"></div>
     </div>
     <div class="toggle-container">
+        <div class="toggle-item">
+            <label class="toggle-switch">
+                <input type="checkbox" id="show-milliseconds" />
+                <span class="slider"></span>
+            </label>
+            <span>Show Milliseconds</span>
+        </div>
         <div class="toggle-item">
             <label class="toggle-switch">
                 <input type="checkbox" id="show-centiseconds" />
@@ -101,17 +109,31 @@
         </div>
     </div>
     <script>
+        let showMilliseconds = false;
         let showCentiseconds = false;
         let use24HourFormat = false;
 
+        // Update logic for milliseconds
+        document.getElementById('show-milliseconds').addEventListener('change', function () {
+            showMilliseconds = this.checked;
+            if (showMilliseconds) {
+                document.getElementById('show-centiseconds').checked = false;
+                showCentiseconds = false;
+            }
+        });
+
         // Update logic for centiseconds
         document.getElementById('show-centiseconds').addEventListener('change', function () {
-            showCentiseconds = this.checked; // Show centiseconds when checked
+            showCentiseconds = this.checked;
+            if (showCentiseconds) {
+                document.getElementById('show-milliseconds').checked = false;
+                showMilliseconds = false;
+            }
         });
 
         // Update logic for hour format
         document.getElementById('use-24-hour-format').addEventListener('change', function () {
-            use24HourFormat = this.checked; // Use 24-hour format when checked
+            use24HourFormat = this.checked;
         });
 
         function updateClock() {
@@ -128,10 +150,13 @@
             hours = String(hours).padStart(2, '0');
             let minutes = String(now.getMinutes()).padStart(2, '0');
             let seconds = String(now.getSeconds()).padStart(2, '0');
+            let milliseconds = String(now.getMilliseconds()).padStart(3, '0');
             let centiseconds = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
 
             let time = `${hours}:${minutes}:${seconds}`;
-            if (showCentiseconds) {
+            if (showMilliseconds) {
+                time += `.${milliseconds}`;
+            } else if (showCentiseconds) {
                 time += `.${centiseconds}`;
             }
             time += period;
