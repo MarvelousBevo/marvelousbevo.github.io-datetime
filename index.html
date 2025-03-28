@@ -131,10 +131,19 @@
             cursor: pointer;
             border-radius: 10px;
             border: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
         }
         .stopwatch-buttons button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */;
+        }
+        .accent {
+            color: #ff4d4d; /* Accent color */
+            font-weight: normal;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
         }
     </style>
 </head>
@@ -188,7 +197,6 @@
         <div class="stopwatch-display" id="stopwatch-display">00:00:00.000</div>
         <div class="stopwatch-buttons">
             <button id="start-stopwatch">Start</button>
-            <button id="stop-stopwatch" disabled>Stop</button>
         </div>
     </div>
     <script>
@@ -254,16 +262,16 @@
 
             let time = `${hours}:${minutes}:${seconds}`;
             if (showMilliseconds) {
-                time += `.${milliseconds}`;
+                time += `<span class="accent">.${milliseconds}</span>`;
             } else if (showCentiseconds) {
-                time += `.${centiseconds}`;
+                time += `<span class="accent">.${centiseconds}</span>`;
             } else if (showDeciseconds) {
-                time += `.${deciseconds}`;
+                time += `<span class="accent">.${deciseconds}</span>`;
             }
             time += period;
 
             document.getElementById('date').textContent = date;
-            document.getElementById('clock').textContent = time;
+            document.getElementById('clock').innerHTML = time;
 
             requestAnimationFrame(updateClock);
         }
@@ -271,56 +279,48 @@
         updateClock();
         let stopwatchInterval;
         let elapsedTime = 0;
-        let isRunning = false;
+        let stopwatchState = 'reset'; // Possible states: 'reset', 'running', 'paused'
 
         const display = document.getElementById('stopwatch-display');
-        const startButton = document.getElementById('start-stopwatch');
-        const stopButton = document.getElementById('stop-stopwatch');
+        const controlButton = document.getElementById('start-stopwatch');
 
         function formatTime(ms) {
             const hours = String(Math.floor(ms / 3600000)).padStart(2, '0');
             const minutes = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
             const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
             const milliseconds = String(ms % 1000).padStart(3, '0');
-            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+            return `${hours}:${minutes}:${seconds}<span class="accent">.${milliseconds}</span>`;
         }
 
         function updateStopwatchDisplay() {
-            display.textContent = formatTime(elapsedTime);
+            display.innerHTML = formatTime(elapsedTime);
         }
 
-        startButton.addEventListener('click', () => {
-            if (!isRunning) {
-                // Automatically reset elapsed time when starting
-                elapsedTime = 0;
-                updateStopwatchDisplay();
-
-                isRunning = true;
-                startButton.textContent = 'Pause';
-                stopButton.disabled = false;
-
-                const startTime = Date.now();
+        controlButton.addEventListener('click', () => {
+            if (stopwatchState === 'reset') {
+                // Start the stopwatch
+                stopwatchState = 'running';
+                controlButton.textContent = 'Pause';
+                const startTime = Date.now() - elapsedTime;
                 stopwatchInterval = setInterval(() => {
                     elapsedTime = Date.now() - startTime;
                     updateStopwatchDisplay();
                 }, 10);
-            } else {
+            } else if (stopwatchState === 'running') {
                 // Pause the stopwatch
-                isRunning = false;
-                startButton.textContent = 'Start';
+                stopwatchState = 'paused';
+                controlButton.textContent = 'Reset';
                 clearInterval(stopwatchInterval);
+            } else if (stopwatchState === 'paused') {
+                // Reset the stopwatch
+                stopwatchState = 'reset';
+                controlButton.textContent = 'Start';
+                elapsedTime = 0;
+                updateStopwatchDisplay();
             }
         });
 
-        stopButton.addEventListener('click', () => {
-            if (isRunning) {
-                // Stop the stopwatch
-                isRunning = false;
-                startButton.textContent = 'Start';
-                clearInterval(stopwatchInterval);
-            }
-        });
-
+        // Initialize the display
         updateStopwatchDisplay();
     </script>
 </body>
