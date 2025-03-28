@@ -6,38 +6,50 @@
     <title>Live Clock</title>
     <style>
         body {
-            font-family: 'Consolas', 'Courier New', monospace; /* Monospaced font for all text */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #222;
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: #222; /* Single background color */
             color: white;
             text-align: center;
+            overflow-y: scroll; /* Enable scrolling */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .clock {
-            font-size: 3rem;
+            font-size: 4rem;
         }
         .date {
             font-size: 1.5rem;
             margin-top: 10px;
         }
-        .toggle-container {
-            margin-top: 20px;
+        .settings {
             display: flex;
-            flex-direction: column; /* Align items vertically */
-            align-items: flex-start; /* Align items to the left */
-            gap: 10px; /* Add spacing between toggle items */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 2vb auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px; /* Increased gap between toggle items */
         }
         .toggle-item {
             display: flex;
             align-items: center;
+            gap: 40px; /* Increased horizontal spacing between the toggle switch and label */
         }
-        .toggle-item span {
-            margin-left: 10px; /* Adjust spacing between the toggle switch and its label */
-        }
-        /* Toggle switch styles */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -48,7 +60,6 @@
             opacity: 0;
             width: 0;
             height: 0;
-            margin-left: -100px; /* Shift the switch to the left by 30px */
         }
         .slider {
             position: absolute;
@@ -64,63 +75,65 @@
             position: absolute;
             height: 20px;
             width: 20px;
-            left: 2px; /* Move the circle 2px to the left */
+            left: 2px;
             bottom: 2px;
             background-color: white;
             border-radius: 50%;
-            transition: transform 0.3s, left 0.3s; /* Smooth transition for left property */
+            transition: transform 0.3s, left 0.3s;
         }
         .toggle-switch input:checked + .slider {
-            background-color: #ff4d4d; /* Red accent color */
+            background-color: #ff4d4d;
         }
         .toggle-switch input:checked + .slider::before {
-            background-color: #ffcccc; /* Light red for the toggle knob */
-            transform: translateX(26px); /* Move the knob to the right */
+            transform: translateX(26px);
         }
     </style>
 </head>
 <body>
-    <div>
-        <div class="date" id="date"></div>
-        <div class="clock" id="clock"></div>
+    <div class="container">
+        <div>
+            <div class="date" id="date"></div>
+            <div class="clock" id="clock"></div>
+        </div>
     </div>
-    <div class="toggle-container">
-        <div class="toggle-item">
-            <label class="toggle-switch">
-                <input type="checkbox" id="show-milliseconds" />
-                <span class="slider"></span>
-            </label>
-            <span>Show Milliseconds</span>
-        </div>
-        <div class="toggle-item">
-            <label class="toggle-switch">
-                <input type="checkbox" id="show-centiseconds" />
-                <span class="slider"></span>
-            </label>
-            <span>Show Centiseconds</span>
-        </div>
-        <div class="toggle-item">
-            <label class="toggle-switch">
-                <input type="checkbox" id="show-deciseconds" />
-                <span class="slider"></span>
-            </label>
-            <span>Show Deciseconds</span>
-        </div>
-        <div class="toggle-item">
-            <label class="toggle-switch">
-                <input type="checkbox" id="use-24-hour-format" />
-                <span class="slider"></span>
-            </label>
-            <span>Use 24-Hour Format</span>
+    <div class="settings">
+        <div class="toggle-container">
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="show-milliseconds" />
+                    <span class="slider"></span>
+                </label>
+                <span>Show Milliseconds</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="show-centiseconds" />
+                    <span class="slider"></span>
+                </label>
+                <span>Show Centiseconds</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="show-deciseconds" />
+                    <span class="slider"></span>
+                </label>
+                <span>Show Deciseconds</span>
+            </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="use-24-hour-format" />
+                    <span class="slider"></span>
+                </label>
+                <span>Use 24-Hour Format</span>
+            </div>
         </div>
     </div>
     <script>
         let showMilliseconds = false;
         let showCentiseconds = false;
-        let showDeciseconds = false; // New toggle state
+        let showDeciseconds = false;
         let use24HourFormat = false;
 
-        // Update logic for milliseconds
         document.getElementById('show-milliseconds').addEventListener('change', function () {
             showMilliseconds = this.checked;
             if (showMilliseconds) {
@@ -131,7 +144,6 @@
             }
         });
 
-        // Update logic for centiseconds
         document.getElementById('show-centiseconds').addEventListener('change', function () {
             showCentiseconds = this.checked;
             if (showCentiseconds) {
@@ -142,7 +154,6 @@
             }
         });
 
-        // Update logic for deciseconds
         document.getElementById('show-deciseconds').addEventListener('change', function () {
             showDeciseconds = this.checked;
             if (showDeciseconds) {
@@ -153,7 +164,6 @@
             }
         });
 
-        // Update logic for hour format
         document.getElementById('use-24-hour-format').addEventListener('change', function () {
             use24HourFormat = this.checked;
         });
@@ -166,7 +176,7 @@
 
             if (!use24HourFormat) {
                 period = hours >= 12 ? ' PM' : ' AM';
-                hours = hours % 12 || 12; // Convert to 12-hour format
+                hours = hours % 12 || 12;
             }
 
             hours = String(hours).padStart(2, '0');
@@ -174,7 +184,7 @@
             let seconds = String(now.getSeconds()).padStart(2, '0');
             let milliseconds = String(now.getMilliseconds()).padStart(3, '0');
             let centiseconds = String(Math.floor(now.getMilliseconds() / 10)).padStart(2, '0');
-            let deciseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0'); // Calculate deciseconds
+            let deciseconds = String(Math.floor(now.getMilliseconds() / 100)).padStart(1, '0');
 
             let time = `${hours}:${minutes}:${seconds}`;
             if (showMilliseconds) {
@@ -192,7 +202,6 @@
             requestAnimationFrame(updateClock);
         }
 
-        // Start the clock
         updateClock();
     </script>
 </body>
