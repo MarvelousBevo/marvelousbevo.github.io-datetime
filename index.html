@@ -13,13 +13,39 @@
             color: white;
             text-align: center;
             overflow-y: scroll; /* Enable scrolling */
+            display: flex; /* Use flexbox for vertical alignment */
+            flex-direction: column; /* Align elements vertically */
+            align-items: center; /* Center elements horizontally */
+            justify-content: flex-start; /* Start elements from the top */
+            gap: 20px; /* Add spacing between elements */
+            scroll-snap-type: y mandatory;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
         }
-        .container {
+         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            margin: 40vb;
+        }
+        .container, .settings, .stopwatch-container {
+            scroll-snap-align: start; /* Snap to the start of each section */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
+        }
+        .light-theme {
+            background-color: #e0e0e0; /* Light gray background */
+            color: #111; /* Dark gray text */
+            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
+        }
+        .light-theme .stopwatch-buttons button {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            border: 1px solid #000; /* Optional: Black border */
+            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
         }
         .clock {
             font-size: 4rem;
@@ -33,7 +59,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin: 2vb auto;
+            margin-bottom: 50vb;
+            margin-top: 10vb;
             padding: 20px;
             border-radius: 10px;
             width: 90%;
@@ -87,6 +114,28 @@
         .toggle-switch input:checked + .slider::before {
             transform: translateX(26px);
         }
+        .stopwatch-container {
+            margin-top: 20px;
+            text-align: center;
+            margin-bottom: 50vb;
+        }
+        .stopwatch-display {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .stopwatch-buttons button {
+            margin: 5px;
+            height: 40px;
+            width: 100px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+        }
+        .stopwatch-buttons button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -126,9 +175,26 @@
                 </label>
                 <span>Use 24-Hour Format</span>
             </div>
+            <div class="toggle-item">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-theme" />
+                    <span class="slider"></span>
+                </label>
+                <span>Light Theme</span>
+            </div>
+        </div>
+    </div>
+    <div class="stopwatch-container">
+        <div class="stopwatch-display" id="stopwatch-display">00:00:00.000</div>
+        <div class="stopwatch-buttons">
+            <button id="start-stopwatch">Start</button>
+            <button id="stop-stopwatch" disabled>Stop</button>
         </div>
     </div>
     <script>
+        document.getElementById('toggle-theme').addEventListener('change', function () {
+        document.body.classList.toggle('light-theme', this.checked);
+      });
         let showMilliseconds = false;
         let showCentiseconds = false;
         let showDeciseconds = false;
@@ -203,6 +269,59 @@
         }
 
         updateClock();
+        let stopwatchInterval;
+        let elapsedTime = 0;
+        let isRunning = false;
+
+        const display = document.getElementById('stopwatch-display');
+        const startButton = document.getElementById('start-stopwatch');
+        const stopButton = document.getElementById('stop-stopwatch');
+
+        function formatTime(ms) {
+            const hours = String(Math.floor(ms / 3600000)).padStart(2, '0');
+            const minutes = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
+            const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
+            const milliseconds = String(ms % 1000).padStart(3, '0');
+            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function updateStopwatchDisplay() {
+            display.textContent = formatTime(elapsedTime);
+        }
+
+        startButton.addEventListener('click', () => {
+            if (!isRunning) {
+                // Automatically reset elapsed time when starting
+                elapsedTime = 0;
+                updateStopwatchDisplay();
+
+                isRunning = true;
+                startButton.textContent = 'Pause';
+                stopButton.disabled = false;
+
+                const startTime = Date.now();
+                stopwatchInterval = setInterval(() => {
+                    elapsedTime = Date.now() - startTime;
+                    updateStopwatchDisplay();
+                }, 10);
+            } else {
+                // Pause the stopwatch
+                isRunning = false;
+                startButton.textContent = 'Start';
+                clearInterval(stopwatchInterval);
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (isRunning) {
+                // Stop the stopwatch
+                isRunning = false;
+                startButton.textContent = 'Start';
+                clearInterval(stopwatchInterval);
+            }
+        });
+
+        updateStopwatchDisplay();
     </script>
 </body>
 </html>
