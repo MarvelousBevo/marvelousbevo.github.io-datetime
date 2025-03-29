@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Clock</title>
     <style>
+        :root {
+            --button-bg: #444;
+            --button-hover-bg: #ff4d4d;
+            --button-disabled-bg: #333; /* Darker grey for dark mode */
+        }
+
+        .light-theme {
+            --button-bg: #ddd;
+            --button-hover-bg: #ff4d4d;
+            --button-disabled-bg: #eee; /* Lighter grey for light mode */
+        }
+
         body {
             font-family: 'Consolas', 'Courier New', monospace;
             margin: 0;
@@ -22,13 +34,14 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
         }
          .container {
+            min-width: 630px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             margin: 40vb;
         }
-        .container, .settings, .stopwatch-container {
+        .container, .settings, .stopwatch-container, .weather-container {
             scroll-snap-align: start; /* Snap to the start of each section */
             display: flex;
             flex-direction: column;
@@ -110,6 +123,7 @@
         }
         .toggle-switch input:checked + .slider {
             background-color: #ff4d4d;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6);
         }
         .toggle-switch input:checked + .slider::before {
             transform: translateX(26px);
@@ -144,6 +158,119 @@
             color: #ff4d4d; /* Accent color */
             font-weight: normal;
             text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
+        }
+        .weather-container {
+            margin-top: 20px;
+            margin-bottom: 15vb;
+            text-align: center;
+            color: white;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .weather-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .weather-content {
+            flex: 1; /* Allow the table to take up available space */
+            text-align: center;
+        }
+
+        .nav-button {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
+            display: flex; /* Use flexbox for centering */
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
+            text-align: center; /* Ensure text is centered */
+        }
+
+        .nav-button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .nav-button:disabled {
+            background-color: var(--button-disabled-bg);
+            cursor: not-allowed;
+            box-shadow: none; /* Remove glow for disabled buttons */
+        }
+
+        #weather-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        #weather-table th, #weather-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #weather-table th {
+            background-color: #444;
+            color: white;
+        }
+
+        #weather-table tr:nth-child(even) {
+            background-color: #333;
+        }
+
+        #weather-table tr:hover {
+            background-color: #555;
+        }
+
+        .current-time {
+            background-color: rgba(255, 77, 77, 0.2); /* Light red background */
+            color: #ff4d4d; /* Red text */
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
+        }
+
+        .day-table {
+            width: auto; /* Allow the table to size itself based on content */
+            margin: 0 auto; /* Center the table */
+            text-align: center;
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensure fixed layout for equal cell sizes */
+        }
+
+        .day-table td {
+            width: 40px; /* Set a fixed width for each cell */
+            height: 40px; /* Match height to width for square cells */
+            padding: 0; /* Remove padding for exact sizing */
+            font-size: 1rem; /* Adjust font size */
+            color: white;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
+            border-radius: 50%; /* Make the highlight circular */
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .day-table td.active-day {
+            background-color: #ff4d4d; /* Red background for the current day */
+            color: white; /* White text */
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
+            border-radius: 50%; /* Ensure the highlight is a perfect circle */
+        }
+
+        .day-table td.viewed-day {
+            background-color: rgba(255, 77, 77, 0.2); /* Light red background for viewed day */
+            color: #ff4d4d; /* Red text */
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
+            border-radius: 50%; /* Ensure the highlight is a perfect circle */
         }
     </style>
 </head>
@@ -197,6 +324,28 @@
         <div class="stopwatch-display" id="stopwatch-display">00:00:00.000</div>
         <div class="stopwatch-buttons">
             <button id="start-stopwatch">Start</button>
+        </div>
+    </div>
+    <!-- Weather Block -->
+    <div class="weather-container">
+        <h2>Weather Forecast for Bellaire, Houston, TX</h2>
+        <div class="weather-navigation">
+            <button id="prev-day" class="nav-button">←</button>
+            <div class="weather-content">
+                <table id="day-table" class="day-table">
+                    <tr>
+                        <td id="day-sun">S</td>
+                        <td id="day-mon">M</td>
+                        <td id="day-tue">T</td>
+                        <td id="day-wed">W</td>
+                        <td id="day-thu">T</td>
+                        <td id="day-fri">F</td>
+                        <td id="day-sat">S</td>
+                    </tr>
+                </table>
+                <table id="weather-table" class="weather-table"></table>
+            </div>
+            <button id="next-day" class="nav-button">→</button>
         </div>
     </div>
     <script>
@@ -322,6 +471,287 @@
 
         // Initialize the display
         updateStopwatchDisplay();
+
+        let groupedData = {}; // Store grouped weather data
+        let currentDayIndex = 0; // Track the current day (today)
+        let days = []; // Array of day keys
+
+        async function fetchWeatherData() {
+            const url = "https://api.open-meteo.com/v1/forecast";
+            const params = {
+                latitude: 29.7058, // Bellaire, Houston, TX
+                longitude: -95.4588,
+                hourly: ["temperature_2m", "precipitation_probability", "cloud_cover", "visibility"],
+                timezone: "America/Chicago", // Central Time Zone
+            };
+
+            // Construct query string from params
+            const queryString = new URLSearchParams({
+                latitude: params.latitude,
+                longitude: params.longitude,
+                hourly: params.hourly.join(","),
+                timezone: params.timezone,
+            }).toString();
+
+            try {
+                // Fetch data from the API
+                const response = await fetch(`${url}?${queryString}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Process and display the data
+                processWeatherData(data);
+            } catch (error) {
+                console.error("Error fetching weather data:", error);
+            }
+        }
+
+        function processWeatherData(data) {
+            const hourly = data.hourly;
+
+            // Extract hourly data
+            const times = hourly.time;
+            const temperatures = hourly.temperature_2m;
+            const precipitationProbabilities = hourly.precipitation_probability;
+            const cloudCover = hourly.cloud_cover;
+            const visibility = hourly.visibility;
+
+            // Group data by day
+            const formatter = new Intl.DateTimeFormat("en-US", {
+                timeZone: "America/Chicago",
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+            });
+
+            groupedData = {}; // Reset grouped data
+            for (let i = 0; i < times.length; i++) {
+                const dateTime = new Date(times[i]);
+                const day = formatter.format(dateTime); // Format the date with the fixed timezone
+                const time = dateTime.toLocaleTimeString("en-US", {
+                    timeZone: "America/Chicago",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                });
+
+                if (!groupedData[day]) {
+                    groupedData[day] = [];
+                }
+
+                groupedData[day].push({
+                    time, // Ensure time is correctly stored
+                    temperature: temperatures[i],
+                    precipitationProbability: precipitationProbabilities[i],
+                    cloudCover: cloudCover[i],
+                    visibility: visibility[i],
+                });
+            }
+
+            // Store the days in an array for navigation
+            days = Object.keys(groupedData);
+
+            // Initialize the currentDayIndex to today's index
+            const now = new Date();
+            const todayFormatted = formatter.format(now); // Format today's date
+            currentDayIndex = days.indexOf(todayFormatted); // Find today's index in the grouped data 
+
+            // Display the current day
+            displayDay(currentDayIndex);
+        }
+
+        function updateDayTable() {
+            // Reorder the days array so the current day is the first
+            const reorderedDays = [...days.slice(currentDayIndex), ...days.slice(0, currentDayIndex)];
+
+            // Map day names to their corresponding IDs in the table
+            const dayIdMap = {
+                Sunday: "day-sun",
+                Monday: "day-mon",
+                Tuesday: "day-tue",
+                Wednesday: "day-wed",
+                Thursday: "day-thu",
+                Friday: "day-fri",
+                Saturday: "day-sat",
+            };
+
+            // Generate the day table dynamically
+            const dayTable = document.getElementById("day-table");
+            dayTable.innerHTML = `
+                <tr>
+                    ${reorderedDays
+                        .map(day => {
+                            const dayId = dayIdMap[day.split(",")[0]]; // Get the day ID (e.g., "day-mon")
+                            return `<td id="${dayId}">${day[0]}</td>`; // Use the first letter of the day
+                        })
+                        .join("")}
+                </tr>
+            `;
+        }
+
+        function displayDay(index) {
+            const day = days[index];
+            const rows = groupedData[day];
+
+            // Map day names to their corresponding IDs in the table
+            const dayIdMap = {
+                Sunday: "day-sun",
+                Monday: "day-mon",
+                Tuesday: "day-tue",
+                Wednesday: "day-wed",
+                Thursday: "day-thu",
+                Friday: "day-fri",
+                Saturday: "day-sat",
+            };
+
+            // Use the current date for initialization
+            const now = new Date(); // Use the actual current date
+            const formatter = new Intl.DateTimeFormat("en-US", {
+                timeZone: "America/Chicago",
+                weekday: "long",
+            });
+            const todayName = formatter.format(now); // Get today's name (e.g., "Friday")
+            const todayId = dayIdMap[todayName]; // Get the corresponding ID for today
+
+            // Debug: Log today's name and ID
+            console.log("Today Name:", todayName);
+            console.log("Today ID:", todayId);
+
+            // Remove the active and viewed classes from all day cells
+            document.querySelectorAll(".day-table td").forEach(td => {
+                td.classList.remove("active-day");
+                td.classList.remove("viewed-day");
+            });
+
+            // Add the active class to the current day
+            const activeDayCell = document.getElementById(todayId);
+            if (activeDayCell) {
+                activeDayCell.classList.add("active-day");
+                console.log(`Active day cell set for: ${todayName}`);
+            }
+
+            // Add the viewed class to the currently viewed day
+            const viewedDayCell = document.querySelectorAll(".day-table td")[index];
+            if (viewedDayCell) {
+                viewedDayCell.classList.add("viewed-day");
+                console.log(`Viewed day cell set for index: ${index}`);
+            }
+
+            // Populate the weather table
+            const weatherTable = document.getElementById("weather-table");
+            weatherTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Temperature (°C)</th>
+                        <th>Precipitation (%)</th>
+                        <th>Cloud Cover (%)</th>
+                        <th>Visibility (km)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows
+                        .map(row => {
+                            // Extract the current hour
+                            const currentHour = now.getHours(); // Get the current hour (0-23)
+
+                            // Parse the row's time into a 24-hour format
+                            let rowHour;
+                            try {
+                                const timeParts = row.time.match(/(\d+):(\d+)\s*(AM|PM)/i); // Match time format like "10:00 PM"
+                                if (timeParts) {
+                                    let hour = parseInt(timeParts[1], 10);
+                                    const minute = parseInt(timeParts[2], 10);
+                                    const period = timeParts[3].toUpperCase();
+
+                                    if (period === "PM" && hour !== 12) {
+                                        hour += 12; // Convert PM to 24-hour format
+                                    } else if (period === "AM" && hour === 12) {
+                                        hour = 0; // Convert 12 AM to 0
+                                    }
+
+                                    rowHour = hour; // Extract the hour in 24-hour format
+                                } else {
+                                    throw new Error(`Invalid time format: ${row.time}`);
+                                }
+                            } catch (error) {
+                                console.error(`Error parsing row time: ${row.time}`, error);
+                                rowHour = NaN; // Fallback to NaN if parsing fails
+                            }
+
+                            // Extract only the weekday name from the `day` variable
+                            const rowDayName = day.split(",")[0]; // Extract the weekday (e.g., "Friday")
+
+                            // Debug: Log current hour, row hour, and row day name
+                            console.log(`Current Hour: ${currentHour}, Row Hour: ${rowHour}, Row Day Name: ${rowDayName}`);
+
+                            // Highlight the current hour if it matches and the day is today
+                            const highlightClass =
+                                currentHour === rowHour && rowDayName === todayName ? "current-time" : "";
+
+                            // Debug: Log whether the highlight class is applied
+                            if (highlightClass) {
+                                console.log(`Highlighting row for time: ${row.time}`);
+                            } else {
+                                console.log(`No highlight for row time: ${row.time}`);
+                            }
+
+                            return `
+                                <tr class="${highlightClass}">
+                                    <td>${row.time}</td>
+                                    <td>${row.temperature}</td>
+                                    <td>${row.precipitationProbability}</td>
+                                    <td>${row.cloudCover}</td>
+                                    <td>${row.visibility}</td>
+                                </tr>
+                            `;
+                        })
+                        .join("")}
+                </tbody>
+            `;
+        }
+
+        // Event listeners for navigation buttons
+        document.getElementById("prev-day").addEventListener("click", () => {
+            const newIndex = (currentDayIndex - 1 + days.length) % days.length; // Cycle back to the last day if needed
+            currentDayIndex = newIndex;
+            displayDay(currentDayIndex);
+        });
+
+        document.getElementById("next-day").addEventListener("click", () => {
+            const newIndex = (currentDayIndex + 1) % days.length; // Cycle forward to the first day if needed
+            currentDayIndex = newIndex;
+            displayDay(currentDayIndex);
+        });
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Fetch and process weather data
+            await fetchWeatherData();
+
+            // Use the current date for initialization
+            const now = new Date(); // Use the actual current date
+            const formatter = new Intl.DateTimeFormat("en-US", {
+                timeZone: "America/Chicago",
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+            });
+            const todayFormatted = formatter.format(now); // Format today's date
+            currentDayIndex = days.indexOf(todayFormatted); // Find today's index in the grouped data
+
+            // Debug: Log the current day index and formatted date
+            console.log("Today Formatted:", todayFormatted);
+            console.log("Current Day Index:", currentDayIndex);
+
+            // Update the day table to start with the current day
+            updateDayTable();
+
+            // Display the current day (viewed day = current day)
+            displayDay(currentDayIndex);
+        });
     </script>
 </body>
 </html>
