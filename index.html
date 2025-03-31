@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Clock</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --button-bg: #444;
+            --button-bg: #111;
             --button-hover-bg: #ff4d4d;
-            --button-disabled-bg: #333; /* Darker grey for dark mode */
-        }
+            --button-disabled-bg: #444; /* Darker grey for dark mode */
+            --sunset: #ffd085; /* Sunset */
+            --periwinkle: #bbc2e2; /* Periwinkle */
+            --raisin-black: #1a1423; /* Raisin Black */
+            --english-violet: #3d314a; /* English Violet */
 
-        .light-theme {
-            --button-bg: #ddd;
-            --button-hover-bg: #ff4d4d;
-            --button-disabled-bg: #eee; /* Lighter grey for light mode */
         }
 
         body {
@@ -33,7 +33,8 @@
             scroll-snap-type: y mandatory;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
         }
-         .container {
+
+        .container {
             min-width: 630px;
             display: flex;
             flex-direction: column;
@@ -41,6 +42,7 @@
             justify-content: center;
             margin: 40vb;
         }
+
         .container, .settings, .stopwatch-container, .weather-container {
             scroll-snap-align: start; /* Snap to the start of each section */
             display: flex;
@@ -49,24 +51,16 @@
             align-items: center;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
         }
-        .light-theme {
-            background-color: #e0e0e0; /* Light gray background */
-            color: #111; /* Dark gray text */
-            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
-        }
-        .light-theme .stopwatch-buttons button {
-            background-color: #000; /* Black background */
-            color: #fff; /* White text */
-            border: 1px solid #000; /* Optional: Black border */
-            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
-        }
+
         .clock {
             font-size: 4rem;
         }
+
         .date {
             font-size: 1.5rem;
             margin-top: 10px;
         }
+
         .settings {
             display: flex;
             flex-direction: column;
@@ -79,28 +73,33 @@
             width: 90%;
             max-width: 400px;
         }
+
         .toggle-container {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             gap: 10px; /* Increased gap between toggle items */
         }
+
         .toggle-item {
             display: flex;
             align-items: center;
             gap: 40px; /* Increased horizontal spacing between the toggle switch and label */
         }
+
         .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
             height: 24px;
         }
+
         .toggle-switch input {
             opacity: 0;
             width: 0;
             height: 0;
         }
+
         .slider {
             position: absolute;
             cursor: pointer;
@@ -110,6 +109,7 @@
             height: 100%;
             transition: background-color 0.3s;
         }
+
         .slider::before {
             content: "";
             position: absolute;
@@ -121,22 +121,27 @@
             border-radius: 50%;
             transition: transform 0.3s, left 0.3s;
         }
+
         .toggle-switch input:checked + .slider {
             background-color: #ff4d4d;
             box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6);
         }
+
         .toggle-switch input:checked + .slider::before {
             transform: translateX(26px);
         }
+
         .stopwatch-container {
             margin-top: 20px;
             text-align: center;
             margin-bottom: 50vb;
         }
+
         .stopwatch-display {
             font-size: 2rem;
             margin-bottom: 10px;
         }
+
         .stopwatch-buttons button {
             margin: 5px;
             height: 40px;
@@ -148,17 +153,20 @@
             font-family: 'Consolas', 'Courier New', monospace;
             box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
         }
+
         .stopwatch-buttons button:disabled {
             background-color: #ccc;
             cursor: not-allowed;
             font-family: 'Consolas', 'Courier New', monospace;
             box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */;
         }
+
         .accent {
             color: #ff4d4d; /* Accent color */
             font-weight: normal;
             text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
         }
+
         .weather-container {
             margin-top: 20px;
             margin-bottom: 15vb;
@@ -184,16 +192,16 @@
             background-color: var(--button-bg);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 90px 15px;
             font-size: 1.5rem;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 20px;
             transition: background-color 0.3s, box-shadow 0.3s;
             box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
             display: flex; /* Use flexbox for centering */
             align-items: center; /* Center content vertically */
             justify-content: center; /* Center content horizontally */
-            text-align: center; /* Ensure text is centered */
+            text-align: center; /* Ensure text is centered */;
         }
 
         .nav-button:hover {
@@ -207,28 +215,48 @@
         }
 
         #weather-table {
-            width: 100%;
-            border-collapse: collapse;
+            width: 100%; /* Allow the table to take up 90% of the container width */
+            max-width: 1200px; /* Set a maximum width for larger screens */
+            min-width: 400px; /* Set a minimum width for smaller screens */
+            border-collapse: collapse; /* Ensure borders don't double up */
             margin-top: 10px;
+            border: 1px solid var(--table-row-text); /* Add a border around the table */
         }
 
         #weather-table th, #weather-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
+            border: 1px solid var(--table-row-text); /* Add borders to table cells */
+            padding: 8px; /* Add padding for better spacing */
+            text-align: center; /* Center-align text */
         }
 
         #weather-table th {
-            background-color: #444;
-            color: white;
+            background-color: var(--table-header-bg); /* Use table header background variable */
+            color: var(--table-header-text); /* Use table header text color variable */
         }
 
         #weather-table tr:nth-child(even) {
-            background-color: #333;
+            background-color: var(--table-row-even-bg); /* Use even row background variable */
+            color: var(--table-row-text); /* Use table row text color variable */
         }
 
-        #weather-table tr:hover {
-            background-color: #555;
+        #weather-table tr:nth-child(odd) {
+            background-color: var(--table-row-odd-bg); /* Use odd row background variable */
+            color: var(--table-row-text); /* Use table row text color variable */
+        }
+
+        #weather-table tr.current-time {
+            background-color: var(--table-current-time-bg); /* Use current time row background variable */
+            color: var(--table-current-time-text); /* Use current time row text color variable */
+            font-weight: bold;
+            text-shadow: none; /* Remove glow effect */
+        }
+
+        #prev-day{
+            transform: translatex(-50px);
+        }
+
+        #next-day{
+            transform: translatex(50px);
         }
 
         .current-time {
@@ -260,17 +288,65 @@
         }
 
         .day-table td.active-day {
-            background-color: #ff4d4d; /* Red background for the current day */
-            color: white; /* White text */
-            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
-            border-radius: 50%; /* Ensure the highlight is a perfect circle */
+            background-color: var(--sunset); /* Sunset for active day */
+            color: var(--raisin-black); /* Raisin Black for text */
         }
 
         .day-table td.viewed-day {
-            background-color: rgba(255, 77, 77, 0.2); /* Light red background for viewed day */
-            color: #ff4d4d; /* Red text */
-            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
-            border-radius: 50%; /* Ensure the highlight is a perfect circle */
+            background-color: var(--periwinkle); /* Periwinkle for viewed day */
+            color: var(--raisin-black); /* Raisin Black for text */
+        }
+
+        .light-theme {
+            --primary: var(--sunset)
+            --secondary: var(--periwinkle)
+            --tetiary: var(--english-violet)
+            --accent: var(--raisin-black)
+        }
+
+        body.light-theme {
+            background-color: var(--primary)
+            color: var(--text-color); /* Light mode text color */
+            text-shadow: none; /* Remove glow effect for light mode */
+        }
+        
+        .light-theme {
+            background-color: #e0e0e0; /* Light gray background */
+            color: #111; /* Dark gray text */
+            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
+        }
+
+        .light-theme .stopwatch-buttons button {
+            background-color: var(--button-bg);
+            color: var(--text-color);
+            border: 1px solid var(--button-bg);
+            text-shadow: none; /* Remove glow effect */
+        }
+
+        .light-theme #weather-table th {
+            background-color: var(--english-violet); /* English Violet for table headers */
+            color: var(--periwinkle); /* Periwinkle for text */
+        }
+
+        .light-theme #weather-table tr:nth-child(even) {
+            background-color: var(--periwinkle); /* Periwinkle for even rows */
+            color: var(--raisin-black); /* Raisin Black for text */
+        }
+
+        .light-theme #weather-table tr:nth-child(odd) {
+            background-color: var(--sunset); /* Sunset for odd rows */
+            color: var(--raisin-black); /* Raisin Black for text */
+        }
+
+        .light-theme #weather-table tr.current-time {
+            background-color: var(--sunset); /* Sunset for current time row */
+            color: var(--raisin-black); /* Raisin Black for text */
+            font-weight: bold;
+            text-shadow: none; /* Remove glow effect */
+        }
+
+        .light-theme h2 {
+            color: var(--raisin-black); /* Raisin Black for text */
         }
     </style>
 </head>
@@ -330,7 +406,7 @@
     <div class="weather-container">
         <h2>Weather Forecast for Bellaire, Houston, TX</h2>
         <div class="weather-navigation">
-            <button id="prev-day" class="nav-button">←</button>
+            <button id="prev-day" class="nav-button"><</button>
             <div class="weather-content">
                 <table id="day-table" class="day-table">
                     <tr>
@@ -343,9 +419,29 @@
                         <td id="day-sat">S</td>
                     </tr>
                 </table>
-                <table id="weather-table" class="weather-table"></table>
+                <table id="weather-table" class="weather-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th><i class="fas fa-thermometer-half"></i></th>
+                            <th><i class="fas fa-cloud-rain"></i></th>
+                            <th><i class="fas fa-cloud"></i></th>
+                            <th><i class="fas fa-binoculars"></i> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>10:00 AM</td>
+                            <td>25°C</td>
+                            <td>20%</td>
+                            <td>50%</td>
+                            <td>10 km</td>
+                        </tr>
+                        <!-- Additional rows will be dynamically generated -->
+                    </tbody>
+                </table>
             </div>
-            <button id="next-day" class="nav-button">→</button>
+            <button id="next-day" class="nav-button">></button>
         </div>
     </div>
     <script>
@@ -389,6 +485,7 @@
 
         document.getElementById('use-24-hour-format').addEventListener('change', function () {
             use24HourFormat = this.checked;
+            displayDay(currentDayIndex); // Re-render the weather table with the updated format
         });
 
         function updateClock() {
@@ -433,7 +530,7 @@
         const display = document.getElementById('stopwatch-display');
         const controlButton = document.getElementById('start-stopwatch');
 
-        function formatTime(ms) {
+        function formatStopwatchTime(ms) {
             const hours = String(Math.floor(ms / 3600000)).padStart(2, '0');
             const minutes = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0');
             const seconds = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0');
@@ -441,8 +538,31 @@
             return `${hours}:${minutes}:${seconds}<span class="accent">.${milliseconds}</span>`;
         }
 
+        function formatTime(date, use24HourFormat) {
+            const options = {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: !use24HourFormat, // Use 12-hour format if `use24HourFormat` is false
+                timeZone: "America/Chicago",
+            };
+            return date.toLocaleTimeString("en-US", options);
+        }
+
+        function convertTo24HourFormat(time12h) {
+            const [time, modifier] = time12h.split(" "); // Split time and AM/PM
+            let [hours, minutes] = time.split(":").map(Number); // Split hours and minutes
+
+            if (modifier === "PM" && hours !== 12) {
+                hours += 12; // Convert PM to 24-hour format
+            } else if (modifier === "AM" && hours === 12) {
+                hours = 0; // Convert 12 AM to 0
+            }
+
+            return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`; // Return 24-hour format
+        }
+
         function updateStopwatchDisplay() {
-            display.innerHTML = formatTime(elapsedTime);
+            display.innerHTML = formatStopwatchTime(elapsedTime);
         }
 
         controlButton.addEventListener('click', () => {
@@ -538,6 +658,9 @@
                     hour12: true,
                 });
 
+                // Convert visibility from meters to kilometers
+                const visibilityInKm = (visibility[i] / 1000).toFixed(1); // Convert to km and round to 1 decimal place
+
                 if (!groupedData[day]) {
                     groupedData[day] = [];
                 }
@@ -547,7 +670,7 @@
                     temperature: temperatures[i],
                     precipitationProbability: precipitationProbabilities[i],
                     cloudCover: cloudCover[i],
-                    visibility: visibility[i],
+                    visibility: visibilityInKm, // Use the converted visibility value
                 });
             }
 
@@ -613,7 +736,7 @@
                 timeZone: "America/Chicago",
                 weekday: "long",
             });
-            const todayName = formatter.format(now); // Get today's name (e.g., "Friday")
+            const todayName = formatter.format(now); // Get today's name (e.g., "Saturday")
             const todayId = dayIdMap[todayName]; // Get the corresponding ID for today
 
             // Debug: Log today's name and ID
@@ -646,66 +769,58 @@
                 <thead>
                     <tr>
                         <th>Time</th>
-                        <th>Temperature (°C)</th>
-                        <th>Precipitation (%)</th>
-                        <th>Cloud Cover (%)</th>
-                        <th>Visibility (km)</th>
+                        <th><i class="fas fa-thermometer-half"></i></th>
+                        <th><i class="fas fa-cloud-rain"></i></th>
+                        <th><i class="fas fa-cloud"></i></th>
+                        <th><i class="fas fa-binoculars"></i></th>
                     </tr>
                 </thead>
                 <tbody>
                     ${rows
                         .map(row => {
-                            // Extract the current hour
-                            const currentHour = now.getHours(); // Get the current hour (0-23)
+                            // Debug: Log the raw time value
+                            console.log("Raw Time:", row.time);
 
-                            // Parse the row's time into a 24-hour format
-                            let rowHour;
-                            try {
-                                const timeParts = row.time.match(/(\d+):(\d+)\s*(AM|PM)/i); // Match time format like "10:00 PM"
-                                if (timeParts) {
-                                    let hour = parseInt(timeParts[1], 10);
-                                    const minute = parseInt(timeParts[2], 10);
-                                    const period = timeParts[3].toUpperCase();
+                            // Convert 12-hour time to 24-hour format
+                            const time24h = convertTo24HourFormat(row.time);
+                            console.log("Converted Time (24-hour):", time24h);
 
-                                    if (period === "PM" && hour !== 12) {
-                                        hour += 12; // Convert PM to 24-hour format
-                                    } else if (period === "AM" && hour === 12) {
-                                        hour = 0; // Convert 12 AM to 0
-                                    }
-
-                                    rowHour = hour; // Extract the hour in 24-hour format
-                                } else {
-                                    throw new Error(`Invalid time format: ${row.time}`);
-                                }
-                            } catch (error) {
-                                console.error(`Error parsing row time: ${row.time}`, error);
-                                rowHour = NaN; // Fallback to NaN if parsing fails
+                            // Parse the row's time into a Date object
+                            const rowTime = new Date(`1970-01-01T${time24h}`);
+                            if (isNaN(rowTime.getTime())) {
+                                console.error(`Invalid time format: ${row.time}`);
+                                return `
+                                    <tr>
+                                        <td>Error</td>
+                                        <td>${row.temperature}°C</td>
+                                        <td>${row.precipitationProbability}%</td>
+                                        <td>${row.cloudCover}%</td>
+                                        <td>${row.visibility} km</td>
+                                    </tr>
+                                `;
                             }
 
-                            // Extract only the weekday name from the `day` variable
-                            const rowDayName = day.split(",")[0]; // Extract the weekday (e.g., "Friday")
-
-                            // Debug: Log current hour, row hour, and row day name
-                            console.log(`Current Hour: ${currentHour}, Row Hour: ${rowHour}, Row Day Name: ${rowDayName}`);
+                            // Compare the current hour and row hour
+                            const isCurrentHour =
+                                now.getHours() === rowTime.getHours() &&
+                                day.split(",")[0].trim() === todayName;
 
                             // Highlight the current hour if it matches and the day is today
-                            const highlightClass =
-                                currentHour === rowHour && rowDayName === todayName ? "current-time" : "";
+                            const highlightClass = isCurrentHour ? "current-time" : "";
 
-                            // Debug: Log whether the highlight class is applied
+                            // Debug: Log whether the row is highlighted
                             if (highlightClass) {
                                 console.log(`Highlighting row for time: ${row.time}`);
-                            } else {
-                                console.log(`No highlight for row time: ${row.time}`);
                             }
 
+                            // Use the converted time (time24h) for display
                             return `
                                 <tr class="${highlightClass}">
-                                    <td>${row.time}</td>
-                                    <td>${row.temperature}</td>
-                                    <td>${row.precipitationProbability}</td>
-                                    <td>${row.cloudCover}</td>
-                                    <td>${row.visibility}</td>
+                                    <td>${use24HourFormat ? time24h : row.time}</td>
+                                    <td>${row.temperature}°C</td>
+                                    <td>${row.precipitationProbability}%</td>
+                                    <td>${row.cloudCover}%</td>
+                                    <td>${row.visibility} km</td>
                                 </tr>
                             `;
                         })
