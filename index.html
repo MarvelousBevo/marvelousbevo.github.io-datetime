@@ -591,7 +591,6 @@
                 timezone: "America/Chicago", // Central Time Zone
             };
 
-            // Construct query string from params
             const queryString = new URLSearchParams({
                 latitude: params.latitude,
                 longitude: params.longitude,
@@ -600,15 +599,12 @@
             }).toString();
 
             try {
-                // Fetch data from the API
                 const response = await fetch(`${url}?${queryString}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
                 const data = await response.json();
-
-                // Process and display the data
                 processWeatherData(data);
             } catch (error) {
                 console.error("Error fetching weather data:", error);
@@ -617,15 +613,12 @@
 
         function processWeatherData(data) {
             const hourly = data.hourly;
-
-            // Extract hourly data
             const times = hourly.time;
             const temperatures = hourly.temperature_2m;
             const precipitationProbabilities = hourly.precipitation_probability;
             const cloudCover = hourly.cloud_cover;
             const visibility = hourly.visibility;
 
-            // Group data by day
             const formatter = new Intl.DateTimeFormat("en-US", {
                 timeZone: "America/Chicago",
                 weekday: "long",
@@ -633,10 +626,10 @@
                 day: "numeric",
             });
 
-            groupedData = {}; // Reset grouped data
+            groupedData = {};
             for (let i = 0; i < times.length; i++) {
                 const dateTime = new Date(times[i]);
-                const day = formatter.format(dateTime); // Format the date with the fixed timezone
+                const day = formatter.format(dateTime);
                 const time = dateTime.toLocaleTimeString("en-US", {
                     timeZone: "America/Chicago",
                     hour: "2-digit",
@@ -644,215 +637,77 @@
                     hour12: true,
                 });
 
-                // Convert visibility from meters to kilometers
-                const visibilityInKm = (visibility[i] / 1000).toFixed(1); // Convert to km and round to 1 decimal place
+                const visibilityInKm = (visibility[i] / 1000).toFixed(1);
 
                 if (!groupedData[day]) {
                     groupedData[day] = [];
                 }
 
                 groupedData[day].push({
-                    time, // Ensure time is correctly stored
+                    time,
                     temperature: temperatures[i],
                     precipitationProbability: precipitationProbabilities[i],
                     cloudCover: cloudCover[i],
-                    visibility: visibilityInKm, // Use the converted visibility value
+                    visibility: visibilityInKm,
                 });
             }
 
-            // Store the days in an array for navigation
             days = Object.keys(groupedData);
+        }
 
-            // Initialize the currentDayIndex to today's index
+        function displayDay(index) {
+            const day = days[index];
+            const rows = groupedData[day];
+
+            // Reorder the day table so the current day is first
+            const reorderedDays = [...days.slice(index), ...days.slice(0, index)];
+            const dayTable = document.querySelector(".day-table tr");
+            dayTable.innerHTML = reorderedDays
+                .map((day, i) => `<td class="${i === 0 ? "active-day" : ""}">${day[0]}</td>`)
+                .join("");
+
+            if (!rows || rows.length === 0) {
+                console.error(`No data available for day: ${day}`);
+                return;
+            }
+
+            updateWeatherTable(rows);
+        }
+
+        function updateWeatherTable(rows) {
+            const weatherTable = document.getElementById("weather-table");
+
+            if (!weatherTable) {
+                console.error("Weather table element not found in the DOM.");
+                return;
+            }
+
             const now = new Date();
-            const todayFormatted = formatter.format(now); // Format today's date
-            currentDayIndex = days.indexOf(todayFormatted); // Find today's index in the grouped data 
+            const currentHour = now.getHours();
 
-            // Display the current day
-            displayDay(currentDayIndex);
-        }
-
-        function updateDayTable() {
-            // Reorder the days array so the current day is the first
-            const reorderedDays = [...days.slice(currentDayIndex), ...days.slice(0, currentDayIndex)];
-
-            // Map day names to their corresponding IDs in the table
-            const dayIdMap = {
-                Sunday: "day-sun",
-                Monday: "day-mon",
-                Tuesday: "day-tue",
-                Wednesday: "day-wed",
-                Thursday: "day-thu",
-                Friday: "day-fri",
-                Saturday: "day-sat",
-            };
-
-            // Generate the day table dynamically
-            const dayTable = document.getElementById("day-table");
-            dayTable.innerHTML = `
-                <tr>
-                    ${reorderedDays
-                        .map(day => {
-                            const dayId = dayIdMap[day.split(",")[0]]; // Get the day ID (e.g., "day-mon")
-                            return `<td id="${dayId}">${day[0]}</td>`; // Use the first letter of the day
-                        })
-                        .join("")}
-                </tr>
-            `;
-        }
-    // Populate the weather table
-    function displayDay(index) {
-    const day = days[index];
-    const rows = groupedData[day];
-
-    // Check if rows exist for the selected day
-    if (!rows || rows.length === 0) {
-        console.error(`No data available for day: ${day}`);
-        return;
-    }
-    }
-    function updateWeatherTable(index) {
-    const day = days[index];
-    const rows = groupedData[day];
-
-    // Check if rows exist for the selected day
-    if (!rows || rows.length === 0) {
-        console.error(`No data available for day: ${day}`);
-        return;
-    }
-
-    // Populate the weather table
-    const weatherTable = document.getElementById("weather-table");
-    weatherTable.innerHTML = `
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Temperature (°C)</th>
-                <th>Precipitation (%)</th>
-                <th>Cloud Cover (%)</th>
-                <th>Visibility (km)</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${rows
-                .map(row => {
-                    const time24h = convertTo24HourFormat(row.time);
-                    const isCurrentHour =
-                        new Date().getHours() === new Date(`1970-01-01T${time24h}`).getHours() &&
-                        day.split(",")[0].trim() === new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date());
-
-                    const highlightClass = isCurrentHour ? "current-time" : "";
-
-                    return `
-                        <tr class="${highlightClass}">
-                            <td>${use24HourFormat ? time24h : row.time}</td>
-                            <td>${row.temperature}°C</td>
-                            <td>${row.precipitationProbability}%</td>
-                            <td>${row.cloudCover}%</td>
-                            <td>${row.visibility} km</td>
-                        </tr>
-                    `;
-                })
-                .join("")}
-        </tbody>
-    `;
-}
-            // Map day names to their corresponding IDs in the table
-            const dayIdMap = {
-                Sunday: "day-sun",
-                Monday: "day-mon",
-                Tuesday: "day-tue",
-                Wednesday: "day-wed",
-                Thursday: "day-thu",
-                Friday: "day-fri",
-                Saturday: "day-sat",
-            };
-
-            // Use the current date for initialization
-            const now = new Date(); // Use the actual current date
-            const formatter = new Intl.DateTimeFormat("en-US", {
-                timeZone: "America/Chicago",
-                weekday: "long",
-            });
-            const todayName = formatter.format(now); // Get today's name (e.g., "Saturday")
-            const todayId = dayIdMap[todayName]; // Get the corresponding ID for today
-
-            // Debug: Log today's name and ID
-            console.log("Today Name:", todayName);
-            console.log("Today ID:", todayId);
-
-            // Remove the active and viewed classes from all day cells
-            document.querySelectorAll(".day-table td").forEach(td => {
-                td.classList.remove("active-day");
-                td.classList.remove("viewed-day");
-            });
-
-            // Add the active class to the current day
-            const activeDayCell = document.getElementById(todayId);
-            if (activeDayCell) {
-                activeDayCell.classList.add("active-day");
-                console.log(`Active day cell set for: ${todayName}`);
-            }
-
-            // Add the viewed class to the currently viewed day
-            const viewedDayCell = document.querySelectorAll(".day-table td")[index];
-            if (viewedDayCell) {
-                viewedDayCell.classList.add("viewed-day");
-                console.log(`Viewed day cell set for index: ${index}`);
-            }
-
-            // Populate the weather table
             weatherTable.innerHTML = `
                 <thead>
                     <tr>
                         <th>Time</th>
-                        <th><i class="fas fa-thermometer-half"></i></th>
-                        <th><i class="fas fa-cloud-rain"></i></th>
-                        <th><i class="fas fa-cloud"></i></th>
-                        <th><i class="fas fa-binoculars"></i></th>
+                        <th>Temperature (°C)</th>
+                        <th>Precipitation (%)</th>
+                        <th>Cloud Cover (%)</th>
+                        <th>Visibility (km)</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${rows
                         .map(row => {
-                            // Debug: Log the raw time value
-                            console.log("Raw Time:", row.time);
-
-                            // Convert 12-hour time to 24-hour format
+                            // Convert the row's time to a Date object
                             const time24h = convertTo24HourFormat(row.time);
-                            console.log("Converted Time (24-hour):", time24h);
-
-                            // Parse the row's time into a Date object
                             const rowTime = new Date(`1970-01-01T${time24h}`);
-                            if (isNaN(rowTime.getTime())) {
-                                console.error(`Invalid time format: ${row.time}`);
-                                return `
-                                    <tr>
-                                        <td>Error</td>
-                                        <td>${row.temperature}°C</td>
-                                        <td>${row.precipitationProbability}%</td>
-                                        <td>${row.cloudCover}%</td>
-                                        <td>${row.visibility} km</td>
-                                    </tr>
-                                `;
-                            }
+                            const rowHour = rowTime.getHours();
 
-                            // Compare the current hour and row hour
-                            const isCurrentHour =
-                                now.getHours() === rowTime.getHours() &&
-                                day.split(",")[0].trim() === todayName;
+                            // Check if the row corresponds to the current hour
+                            const isCurrentHour = rowHour === currentHour;
 
-                            // Highlight the current hour if it matches and the day is today
-                            const highlightClass = isCurrentHour ? "current-time" : "";
-
-                            // Debug: Log whether the row is highlighted
-                            if (highlightClass) {
-                                console.log(`Highlighting row for time: ${row.time}`);
-                            }
-
-                            // Use the converted time (time24h) for display
                             return `
-                                <tr class="${highlightClass}">
+                                <tr class="${isCurrentHour ? "current-time" : ""}">
                                     <td>${use24HourFormat ? time24h : row.time}</td>
                                     <td>${row.temperature}°C</td>
                                     <td>${row.precipitationProbability}%</td>
@@ -864,43 +719,31 @@
                         .join("")}
                 </tbody>
             `;
+        }
 
-        // Event listeners for navigation buttons
         document.getElementById("prev-day").addEventListener("click", () => {
-            const newIndex = (currentDayIndex - 1 + days.length) % days.length; // Cycle back to the last day if needed
-            currentDayIndex = newIndex;
+            currentDayIndex = (currentDayIndex - 1 + days.length) % days.length;
             displayDay(currentDayIndex);
         });
 
         document.getElementById("next-day").addEventListener("click", () => {
-            const newIndex = (currentDayIndex + 1) % days.length; // Cycle forward to the first day if needed
-            currentDayIndex = newIndex;
+            currentDayIndex = (currentDayIndex + 1) % days.length;
             displayDay(currentDayIndex);
         });
 
         document.addEventListener("DOMContentLoaded", async () => {
-            // Fetch and process weather data
             await fetchWeatherData();
 
-            // Use the current date for initialization
-            const now = new Date(); // Use the actual current date
+            const now = new Date();
             const formatter = new Intl.DateTimeFormat("en-US", {
                 timeZone: "America/Chicago",
                 weekday: "long",
                 month: "short",
                 day: "numeric",
             });
-            const todayFormatted = formatter.format(now); // Format today's date
-            currentDayIndex = days.indexOf(todayFormatted); // Find today's index in the grouped data
+            const todayFormatted = formatter.format(now);
+            currentDayIndex = days.indexOf(todayFormatted);
 
-            // Debug: Log the current day index and formatted date
-            console.log("Today Formatted:", todayFormatted);
-            console.log("Current Day Index:", currentDayIndex);
-
-            // Update the day table to start with the current day
-            updateDayTable();
-
-            // Display the current day (viewed day = current day)
             displayDay(currentDayIndex);
         });
     </script>
