@@ -700,8 +700,18 @@
                 </tr>
             `;
         }
+    // Populate the weather table
+    function displayDay(index) {
+    const day = days[index];
+    const rows = groupedData[day];
 
-        function displayDay(index) {
+    // Check if rows exist for the selected day
+    if (!rows || rows.length === 0) {
+        console.error(`No data available for day: ${day}`);
+        return;
+    }
+    }
+    function updateWeatherTable(index) {
     const day = days[index];
     const rows = groupedData[day];
 
@@ -746,7 +756,7 @@
                 .join("")}
         </tbody>
     `;
-} // <-- Ensure this closing brace is present
+}
             // Map day names to their corresponding IDs in the table
             const dayIdMap = {
                 Sunday: "day-sun",
@@ -894,5 +904,6 @@
             displayDay(currentDayIndex);
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
