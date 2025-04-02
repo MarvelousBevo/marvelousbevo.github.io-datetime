@@ -232,12 +232,15 @@
 
         #weather-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: collapse; /* Remove gaps between cells */
             margin-top: 10px;
+            border: 1px solid #ddd; /* Add a border around the table */
+            border-radius: 10px; /* Round the outer edges of the table */
+            overflow: hidden; /* Ensure the border-radius applies to the table */
         }
 
         #weather-table th, #weather-table td {
-            border: 1px solid #ddd;
+            border: none; /* Remove vertical lines between cells */
             padding: 8px;
             text-align: center;
         }
@@ -655,16 +658,12 @@
             days = Object.keys(groupedData);
         }
 
-        function displayDay(index) {
-            const day = days[index];
+        function displayDay(viewedDayIndex) {
+            const day = days[viewedDayIndex];
             const rows = groupedData[day];
 
-            // Reorder the day table so the current day is first
-            const reorderedDays = [...days.slice(index), ...days.slice(0, index)];
-            const dayTable = document.querySelector(".day-table tr");
-            dayTable.innerHTML = reorderedDays
-                .map((day, i) => `<td class="${i === 0 ? "active-day" : ""}">${day[0]}</td>`)
-                .join("");
+            // Update the day header to highlight both the current day and the viewed day
+            updateDayHeader(currentDayIndex, viewedDayIndex);
 
             if (!rows || rows.length === 0) {
                 console.error(`No data available for day: ${day}`);
@@ -685,6 +684,18 @@
             const now = new Date();
             const currentHour = now.getHours();
 
+            // Get the current day in the same format as `days`
+            const formatter = new Intl.DateTimeFormat("en-US", {
+                timeZone: "America/Chicago",
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+            });
+            const todayFormatted = formatter.format(now);
+
+            // Check if the current day is being viewed
+            const isCurrentDay = days[currentDayIndex] === todayFormatted;
+
             weatherTable.innerHTML = `
                 <thead>
                     <tr>
@@ -703,8 +714,8 @@
                             const rowTime = new Date(`1970-01-01T${time24h}`);
                             const rowHour = rowTime.getHours();
 
-                            // Check if the row corresponds to the current hour
-                            const isCurrentHour = rowHour === currentHour;
+                            // Highlight the current hour only if the current day is being viewed
+                            const isCurrentHour = isCurrentDay && rowHour === currentHour;
 
                             return `
                                 <tr class="${isCurrentHour ? "current-time" : ""}">
@@ -719,6 +730,26 @@
                         .join("")}
                 </tbody>
             `;
+        }
+
+        function updateDayHeader(currentDayIndex, viewedDayIndex) {
+            const dayTable = document.querySelector(".day-table tr");
+
+            // Reset the day table with all days in their original order
+            dayTable.innerHTML = days
+                .map((day, i) => {
+                    const isActiveDay = i === currentDayIndex; // Highlight the current day
+                    const isViewedDay = i === viewedDayIndex; // Highlight the viewed day
+                    const classes = [
+                        isActiveDay ? "active-day" : "",
+                        isViewedDay ? "viewed-day" : "",
+                    ]
+                        .filter(Boolean) // Remove empty classes
+                        .join(" "); // Combine classes into a single string
+
+                    return `<td class="${classes}">${day[0]}</td>`;
+                })
+                .join("");
         }
 
         document.getElementById("prev-day").addEventListener("click", () => {
@@ -744,6 +775,7 @@
             const todayFormatted = formatter.format(now);
             currentDayIndex = days.indexOf(todayFormatted);
 
+            // Display the current day as the default viewed day
             displayDay(currentDayIndex);
         });
     </script>
