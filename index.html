@@ -155,7 +155,7 @@
         .stopwatch-container {
             margin-top: 20px;
             text-align: center;
-            margin-bottom: 50vb;
+            margin-bottom: 0; /* Remove bottom margin */
         }
         .stopwatch-display {
             font-size: 2rem;
@@ -299,90 +299,309 @@
             text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Red glow effect */
             border-radius: 50%; /* Ensure the highlight is a perfect circle */
         }
+        .timer-container {
+            margin-top: 20px;
+            text-align: center;
+            margin-bottom: 50vb; /* Add bottom margin */
+        }
+
+        .timer-display {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            user-select: none;
+        }
+
+        .timer-buttons button {
+            margin: 5px;
+            height: 40px;
+            width: 100px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
+        }
+
+        .timer-buttons button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .timer-duration {
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .timer-duration input {
+            width: 60px;
+            padding: 5px;
+            font-size: 1rem;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .timer-duration label {
+            margin-right: 10px;
+            font-size: 1rem;
+        }
+        .time-tools-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px; /* Add spacing between stopwatch and timer */
+            margin-top: 20px;
+            margin-bottom: 40vb;
+            text-align: center;
+        }
+
+        .stopwatch-container, .timer-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .stopwatch-container h2, .timer-container h2 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            color: #ff4d4d;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6);
+        }
+
+        .stopwatch-display, .timer-display {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stopwatch-buttons button, .timer-buttons button {
+            margin: 5px;
+            height: 40px;
+            width: 100px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+            font-family: 'Consolas', 'Courier New', monospace;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6);
+        }
+
+        .stopwatch-buttons button:disabled, .timer-buttons button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .timer-display input {
+            width: 80px;
+            font-size: 2rem;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            background-color: #444; /* Match the background color of the page */
+            color: white; /* Match the text color of the page */
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Glow effect */
+            outline: none; /* Remove default focus outline */
+            padding: 5px;
+            font-family: 'Consolas', 'Courier New', monospace; /* Match the font style */
+        }
+
+        .timer-display input:focus {
+            background-color: #555; /* Slightly lighter background on focus */
+            box-shadow: 0 0 15px rgba(255, 77, 77, 1), 0 0 30px rgba(255, 77, 77, 0.8); /* Stronger glow on focus */
+        }
+        .sidebar {
+            position: fixed;
+            top: 30%;
+            right: -50px; /* Move the sidebar to the right */
+            width: 200px;
+            height: 100%;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Add spacing between buttons */
+        }
+
+        .sidebar nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem; /* Keep the font size for the dash */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; /* Adjust width for smaller button */
+            height: 40px; /* Adjust height for smaller button */
+            border-radius: 50%; /* Make the button circular */
+            background-color: #222; /* Match the sidebar background */
+            transition: background-color 0.3s, transform 0.3s; /* Add hover transition */
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #444; /* Change background color on hover */
+            transform: scale(1.1); /* Slightly enlarge on hover */
+        }
+
+        .scrollable-container section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+            height: 100vh; /* Full viewport height */
+            text-align: center; /* Center text alignment */
+        }
+
+        .container, .settings, .stopwatch-container, .timer-container, .weather-container, .custom-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+            width: 100%; /* Ensure full width */
+            height: 100%; /* Ensure full height */
+        }
+
+        .custom-form {
+            max-width: 400px; /* Limit the width of the contact form */
+        }
+
+        html {
+            scroll-behavior: smooth; /* Enable smooth scrolling */
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div>
-            <div class="date" id="date"></div>
-            <div class="clock" id="clock"></div>
-        </div>
+    <div class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="#clock-section">-</a></li>
+                <li><a href="#settings-section">-</a></li>
+                <li><a href="#stopwatch-section">-</a></li>
+                <li><a href="#timer-section">-</a></li>
+                <li><a href="#weather-section">-</a></li>
+                <li><a href="#contact-section">-</a></li>
+            </ul>
+        </nav>
     </div>
-    <div class="settings">
-        <div class="toggle-container">
-            <div class="toggle-item">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="show-milliseconds" />
-                    <span class="slider"></span>
-                </label>
-                <span>Show Milliseconds</span>
+
+    <div class="scrollable-container">
+        <section id="clock-section">
+            <div class="container">
+                <div>
+                    <div class="date" id="date"></div>
+                    <div class="clock" id="clock"></div>
+                </div>
             </div>
-            <div class="toggle-item">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="show-centiseconds" />
-                    <span class="slider"></span>
-                </label>
-                <span>Show Centiseconds</span>
+        </section>
+
+        <section id="settings-section">
+            <div class="settings">
+                <div class="toggle-container">
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="show-milliseconds" />
+                            <span class="slider"></span>
+                        </label>
+                        <span>Show Milliseconds</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="show-centiseconds" />
+                            <span class="slider"></span>
+                        </label>
+                        <span>Show Centiseconds</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="show-deciseconds" />
+                            <span class="slider"></span>
+                        </label>
+                        <span>Show Deciseconds</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="use-24-hour-format" />
+                            <span class="slider"></span>
+                        </label>
+                        <span>Use 24-Hour Format</span>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="toggle-theme" />
+                            <span class="slider"></span>
+                        </label>
+                        <span>Light Theme</span>
+                    </div>
+                </div>
             </div>
-            <div class="toggle-item">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="show-deciseconds" />
-                    <span class="slider"></span>
-                </label>
-                <span>Show Deciseconds</span>
+        </section>
+
+        <section id="stopwatch-section">
+            <div class="stopwatch-container">
+                <h2>Stopwatch</h2>
+                <div class="stopwatch-display" id="stopwatch-display">00:00:00.000</div>
+                <div class="stopwatch-buttons">
+                    <button id="start-stopwatch">Start</button>
+                </div>
             </div>
-            <div class="toggle-item">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="use-24-hour-format" />
-                    <span class="slider"></span>
-                </label>
-                <span>Use 24-Hour Format</span>
+        </section>
+
+        <section id="timer-section">
+            <div class="timer-container">
+                <h2>Timer</h2>
+                <div class="timer-display" id="timer-display">05:00</div>
+                <div class="timer-buttons">
+                    <button id="start-timer">Start</button>
+                    <button id="pause-timer" disabled>Pause</button>
+                    <button id="reset-timer">Reset</button>
+                </div>
             </div>
-            <div class="toggle-item">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-theme" />
-                    <span class="slider"></span>
-                </label>
-                <span>Light Theme</span>
+        </section>
+
+        <section id="weather-section">
+            <div class="weather-container">
+                <h2>Weather Forecast for Bellaire, Houston, TX</h2>
+                <div class="weather-navigation">
+                    <button id="prev-day" class="nav-button">←</button>
+                    <div class="weather-content">
+                        <table id="day-table" class="day-table">
+                            <tr>
+                                <td id="day-sun">S</td>
+                                <td id="day-mon">M</td>
+                                <td id="day-tue">T</td>
+                                <td id="day-wed">W</td>
+                                <td id="day-thu">T</td>
+                                <td id="day-fri">F</td>
+                                <td id="day-sat">S</td>
+                            </tr>
+                        </table>
+                        <table id="weather-table" class="weather-table"></table>
+                    </div>
+                    <button id="next-day" class="nav-button">→</button>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section id="contact-section">
+            <form action="https://formbold.com/s/6r7qJ" method="POST" class="custom-form">
+                <h1>Get Your Website Here</h1>
+                <input type="Email" placeholder="Email" name="email" class="form-input">
+                <input type="Phone Number" placeholder="Phone Number" name="phonenumber" class="form-input">
+                <input type="text" placeholder="Subject" name="subject" class="form-input">
+                <textarea name="message" placeholder="Describe Your Website" class="form-textarea"></textarea>
+                <button type="submit" class="form-button">Get a Quote</button>
+            </form>
+        </section>
     </div>
-    <div class="stopwatch-container">
-        <div class="stopwatch-display" id="stopwatch-display">00:00:00.000</div>
-        <div class="stopwatch-buttons">
-            <button id="start-stopwatch">Start</button>
-        </div>
-    </div>
-    <!-- Weather Block -->
-    <div class="weather-container">
-        <h2>Weather Forecast for Bellaire, Houston, TX</h2>
-        <div class="weather-navigation">
-            <button id="prev-day" class="nav-button">←</button>
-            <div class="weather-content">
-                <table id="day-table" class="day-table">
-                    <tr>
-                        <td id="day-sun">S</td>
-                        <td id="day-mon">M</td>
-                        <td id="day-tue">T</td>
-                        <td id="day-wed">W</td>
-                        <td id="day-thu">T</td>
-                        <td id="day-fri">F</td>
-                        <td id="day-sat">S</td>
-                    </tr>
-                </table>
-                <table id="weather-table" class="weather-table"></table>
-            </div>
-            <button id="next-day" class="nav-button">→</button>
-        </div>
-    </div>
-    <!-- modify this form HTML and place wherever you want your form -->
-    <form action="https://formbold.com/s/6r7qJ" method="POST" class="custom-form">
-        <h1>Contact</h1>
-        <input type="email" placeholder="Email" name="email" class="form-input">
-        <input type="text" placeholder="Subject" name="subject" class="form-input">
-        <textarea name="message" placeholder="Type your message" class="form-textarea"></textarea>
-        <button type="submit" class="form-button">Send Message</button>
-    </form>
     <style>
         .custom-form {
             display: flex;
@@ -391,7 +610,7 @@
             gap: 15px;
             width: 90%;
             max-width: 400px;
-            margin: 20px;
+            margin: 25vb;
             padding: 20px;
             border-radius: 10px;
             background-color: #444;
@@ -778,7 +997,210 @@
             // Display the current day as the default viewed day
             displayDay(currentDayIndex);
         });
+
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toLowerCase(); // Ensure case-insensitivity
+
+            if (key === 'm') {
+                const millisecondsCheckbox = document.getElementById('show-milliseconds');
+                if (!millisecondsCheckbox.checked) {
+                    millisecondsCheckbox.checked = true; // Toggle milliseconds on
+                    millisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            } else if (key === 'c') {
+                const centisecondsCheckbox = document.getElementById('show-centiseconds');
+                if (!centisecondsCheckbox.checked) {
+                    centisecondsCheckbox.checked = true; // Toggle centiseconds on
+                    centisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            } else if (key === 'd') {
+                const decisecondsCheckbox = document.getElementById('show-deciseconds');
+                if (!decisecondsCheckbox.checked) {
+                    decisecondsCheckbox.checked = true; // Toggle deciseconds on
+                    decisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            } else if (key === 'l') {
+                const themeCheckbox = document.getElementById('toggle-theme');
+                themeCheckbox.checked = !themeCheckbox.checked; // Toggle the checkbox state
+                themeCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+            }
+        });
+
+        let timerInterval;
+        let timerTime = 300; // Timer starts at 5 minutes (300 seconds)
+        let timerState = 'reset'; // Possible states: 'reset', 'running', 'paused'
+
+        const timerDisplay = document.getElementById('timer-display');
+        const startTimerButton = document.getElementById('start-timer');
+        const pauseTimerButton = document.getElementById('pause-timer');
+        const resetTimerButton = document.getElementById('reset-timer');
+
+        function formatTimerTime(seconds) {
+            const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const secs = String(seconds % 60).padStart(2, '0');
+            return `${minutes}:${secs}`;
+        }
+
+        function updateTimerDisplay() {
+            timerDisplay.textContent = formatTimerTime(timerTime);
+        }
+
+        startTimerButton.addEventListener('click', () => {
+            if (timerState === 'reset' || timerState === 'paused') {
+                timerState = 'running';
+                startTimerButton.disabled = true;
+                pauseTimerButton.disabled = false;
+                resetTimerButton.disabled = false;
+
+                const startTime = Date.now();
+                const endTime = startTime + timerTime * 1000;
+
+                function update() {
+                    const now = Date.now();
+                    const remainingTime = Math.max(0, Math.floor((endTime - now) / 1000));
+                    timerTime = remainingTime;
+                    updateTimerDisplay();
+
+                    if (remainingTime > 0 && timerState === 'running') {
+                        requestAnimationFrame(update); // Use requestAnimationFrame for smoother updates
+                    } else if (remainingTime === 0) {
+                        timerState = 'reset';
+                        startTimerButton.disabled = false;
+                        pauseTimerButton.disabled = true;
+                        resetTimerButton.disabled = false;
+                        alert('Timer finished!');
+                    }
+                }
+
+                update(); // Start the update loop
+            }
+        });
+
+        pauseTimerButton.addEventListener('click', () => {
+            if (timerState === 'running') {
+                timerState = 'paused';
+                clearInterval(timerInterval);
+                startTimerButton.disabled = false;
+                pauseTimerButton.disabled = true;
+            }
+        });
+
+        resetTimerButton.addEventListener('click', () => {
+            timerState = 'reset';
+            clearInterval(timerInterval);
+            timerTime = 300; // Reset to 5 minutes
+            updateTimerDisplay();
+            startTimerButton.disabled = false;
+            pauseTimerButton.disabled = true;
+            resetTimerButton.disabled = true;
+        });
+
+        // Initialize the timer display
+        updateTimerDisplay();
+
+        let isEditingTimer = false;
+
+        // Handle double-click to change timer display to input
+        timerDisplay.addEventListener('dblclick', () => {
+            if (isEditingTimer) return;
+
+            isEditingTimer = true;
+            const currentTime = timerDisplay.textContent;
+            const [minutes, seconds] = currentTime.split(':').map(Number);
+
+            // Create an input element
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = `${minutes}:${seconds.toString().padStart(2, '0')}`; // Pre-fill with current time
+            input.style.width = '80px';
+            input.style.fontSize = '2rem';
+            input.style.textAlign = 'center';
+
+            // Replace the timer display with the input
+            timerDisplay.textContent = '';
+            timerDisplay.appendChild(input);
+            input.focus();
+
+            // Handle Enter key to save the input value
+            input.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    const [newMinutes, newSeconds] = input.value.split(':').map(Number);
+                    if (
+                        !isNaN(newMinutes) &&
+                        !isNaN(newSeconds) &&
+                        newMinutes >= 0 &&
+                        newSeconds >= 0 &&
+                        newSeconds < 60
+                    ) {
+                        timerTime = newMinutes * 60 + newSeconds; // Update timer time
+                        updateTimerDisplay();
+                    } else {
+                        alert('Please enter a valid time in the format MM:SS.');
+                    }
+
+                    // Restore the timer display
+                    timerDisplay.textContent = formatTimerTime(timerTime);
+                    isEditingTimer = false;
+                }
+            });
+
+            // Handle blur (clicking outside) to cancel editing
+            input.addEventListener('blur', () => {
+                if (isEditingTimer) {
+                    timerDisplay.textContent = formatTimerTime(timerTime);
+                    isEditingTimer = false;
+                }
+            });
+        });
+
+        function scrollToSection(sectionId) {
+            const section = document.querySelector(sectionId);
+
+            let topPosition;
+            if (sectionId === '#contact-section') {
+                // Scroll as far down as possible for the Contact section
+                topPosition = document.body.scrollHeight - window.innerHeight;
+            } else {
+                // Center other sections in the viewport
+                const offset = (window.innerHeight - section.offsetHeight) / 2 - 155; // Adjust offset to scroll slightly less
+                topPosition = section.getBoundingClientRect().top + window.scrollY + offset;
+            }
+
+            window.scrollTo({
+                top: topPosition,
+                behavior: 'smooth', // Smooth scrolling
+            });
+        }
+
+        // Adjust scrolling for Timer section
+        document.querySelector('a[href="#timer-section"]').addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            scrollToSection('#timer-section');
+        });
+
+        // Adjust scrolling for Settings section
+        document.querySelector('a[href="#settings-section"]').addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            scrollToSection('#settings-section');
+        });
+
+        // Adjust scrolling for Contact section
+        document.querySelector('a[href="#contact-section"]').addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor behavior
+            scrollToSection('#contact-section');
+        });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
+<footer>
+    <div style="text-align: center; padding: 10px; font-size: 0.9rem; color: #888;">
+        <p>&copy; 2025 Liem R. Vora. All rights reserved.</p>
+        <p>Licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank" style="color: #ff4d4d; text-decoration: none;">MIT License</a>.</p>
+        <p>Contact: 
+            <a href="tel:+12812244983" style="color: #ff4d4d; text-decoration: none;">(281) 224-4983</a> | 
+            <a href="mailto:liem.vora@gmail.com" style="color: #ff4d4d; text-decoration: none;">liem.vora@gmail.com</a>
+        </p>
+    </div>
+</footer>
 </html>
