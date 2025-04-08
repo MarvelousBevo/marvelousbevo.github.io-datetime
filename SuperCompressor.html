@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Editor with Export & Import</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+    <script>
+        const base91 = {
+            encode: function(input) {
+                let b = [], n = 0, bit = 0;
+                for (let i = 0; i < input.length; i++) {
+                    n |= input.charCodeAt(i) << bit;
+                    bit += 8;
+                    if (bit > 13) {
+                        b.push(String.fromCharCode(n & 8191));
+                        n >>= 13;
+                        bit -= 13;
+                    }
+                }
+                if (bit) b.push(String.fromCharCode(n));
+                return b.join("");
+            },
+            decode: function(input) {
+                let output = "", n = 0, bit = 0;
+                for (let i = 0; i < input.length; i++) {
+                    n |= input.charCodeAt(i) << bit;
+                    bit += 13;
+                    while (bit >= 8) {
+                        output += String.fromCharCode(n & 255);
+                        n >>= 8;
+                        bit -= 8;
+                    }
+                }
+                return output;
+            }
+        };
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-size: 16px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Note Editor</h2>
+    <textarea id="noteArea" placeholder="Write your notes here..."></textarea>
+    <br>
+
+    <progress id="compressionProgress" value="0" max="100" style="width: 100%; display: none;"></progress>
+    <br>
+
+    <button onclick="exportNote()">Export (.txt)</button>
+    <button onclick="importNote()">Import (.txt)</button>
+
+    <button onclick="exportCompressed()">Export (Base91)</button>
+    <button onclick="exportBase64()">Export (Base64)</button>
+    <input type="file" id="importFile" onchange="importCompressed()" hidden>
+    <button onclick="document.getElementById('importFile').click()">Import (Compressed)</button>
+
+    <script>
+        function exportNote() {
+            const text = document.getElementById('noteArea').value;
+            const blob = new Blob([text], { type: "text/plain" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "note.txt";
+            link.click();
+        }
+
+        function importNote() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".txt";
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = () => {
+                    document.getElementById("noteArea").value = reader.result;
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        async function exportCompressed() {
+            const text = document.getElementById('noteArea').value;
+            const progressBar = document.getElementById('compressionProgress');
+            progressBar.style.display = 'block'; // Show the progress bar
+            progressBar.value = 0; // Reset progress bar
+
+            // Simulate chunk-based compression
+            const chunkSize = Math.ceil(text.length / 10); // Divide text into 10 chunks
+            let compressedChunks = [];
+            for (let i = 0; i < text.length; i += chunkSize) {
+                const chunk = text.slice(i, i + chunkSize);
+                const compressedChunk = pako.deflate(chunk, { to: 'string' });
+                compressedChunks.push(compressedChunk);
+
+                // Update progress bar
+                progressBar.value = Math.min(100, ((i + chunkSize) / text.length) * 100);
+                await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay for progress
+            }
+
+            // Combine all compressed chunks
+            const compressed = compressedChunks.join('');
+            const encoded = base91.encode(compressed);
+
+            // Create a .bin file
+            const blob = new Blob([encoded], { type: "application/octet-stream" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "note_compressed.bin"; // Change file extension to .bin
+            link.click();
+
+            progressBar.style.display = 'none'; // Hide the progress bar
+        }
+
+        async function exportBase64() {
+            const text = document.getElementById('noteArea').value;
+            const progressBar = document.getElementById('compressionProgress');
+            progressBar.style.display = 'block'; // Show the progress bar
+            progressBar.value = 0; // Reset progress bar
+
+            // Simulate chunk-based compression
+            const chunkSize = Math.ceil(text.length / 10); // Divide text into 10 chunks
+            let compressedChunks = [];
+            for (let i = 0; i < text.length; i += chunkSize) {
+                const chunk = text.slice(i, i + chunkSize);
+                const compressedChunk = pako.deflate(chunk, { to: 'string' });
+                compressedChunks.push(compressedChunk);
+
+                // Update progress bar
+                progressBar.value = Math.min(100, ((i + chunkSize) / text.length) * 100);
+                await new Promise(resolve => setTimeout(resolve, 50)); // Simulate delay for progress
+            }
+
+            // Combine all compressed chunks
+            const compressed = compressedChunks.join('');
+            const encoded = btoa(compressed); // Base64 encoding
+
+            // Create a .bin file
+            const blob = new Blob([encoded], { type: "application/octet-stream" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "note_compressed_base64.bin"; // File extension for Base64
+            link.click();
+
+            progressBar.style.display = 'none'; // Hide the progress bar
+        }
+
+        function importCompressed() {
+            const fileInput = document.getElementById("importFile");
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const decoded = base91.decode(event.target.result);
+                const decompressed = pako.inflate(decoded, { to: 'string' });
+                document.getElementById("noteArea").value = decompressed;
+            };
+            reader.readAsText(file);
+        }
+    </script>
+
+</body>
+</html>

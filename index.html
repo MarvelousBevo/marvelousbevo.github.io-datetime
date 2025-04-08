@@ -12,41 +12,13 @@
             --button-disabled-bg: #333; /* Darker grey for dark mode */
         }
 
-        .light-theme {
-            --button-bg: #ddd;
-            --button-hover-bg: #ff4d4d;
-            --button-disabled-bg: #fff; /* Lighter grey for light mode */
-        }
-        .light-theme #weather-table th {
-            background-color: #f0f0f0; /* Slightly darker light gray for header */
-            color: #222; /* Darker text for header */
-        }
-
-        .light-theme #weather-table tr:nth-child(even) {
-            background-color: #ffffff; /* Pure white for even rows */
-        }
-
-        .light-theme #weather-table tr:nth-child(odd) {
-            background-color: #f9f9f9; /* Slightly off-white for odd rows */
-        }
-
-        .light-theme #weather-table tr:hover {
-            background-color: #ffe6e6; /* Slight red for hover effect */
-        }
-
-        .light-theme #weather-table td {
-            color: #333; /* Darker text for table cells */
-        }
-        .light-theme .nav-button {
-            background-color: #ccc;
-        }
-
         body {
             font-family: 'Consolas', 'Courier New', monospace;
             margin: 0;
             padding: 0;
-            background-color: #222; /* Single background color */
-            color: white;
+            background: url(kawasehasui.jpeg) no-repeat center center; /* Remove 'fixed' to allow scrolling */
+            background-size: cover; /* Make the image fit the width while maintaining aspect ratio */
+            color: #ccc; /* Use light gray text */
             text-align: center;
             overflow-y: scroll; /* Enable scrolling */
             display: flex; /* Use flexbox for vertical alignment */
@@ -55,7 +27,7 @@
             justify-content: flex-start; /* Start elements from the top */
             gap: 20px; /* Add spacing between elements */
             scroll-snap-type: y mandatory;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 0, 0, 0.2); /* Subtle shadow for text */
         }
          .container {
             min-width: 630px;
@@ -73,17 +45,7 @@
             align-items: center;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.2); /* Glow effect */
         }
-        .light-theme {
-            background-color: #e0e0e0; /* Light gray background */
-            color: #111; /* Dark gray text */
-            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
-        }
-        .light-theme .stopwatch-buttons button {
-            background-color: #000; /* Black background */
-            color: #fff; /* White text */
-            border: 1px solid #000; /* Optional: Black border */
-            text-shadow: 0 0 10px rgba(0,0,0, 0.4), 0 0 20px rgba(0,0,0 0.2); /* Glow effect */
-        }
+
         .clock {
             font-size: 4rem;
         }
@@ -200,8 +162,19 @@
         }
 
         .weather-content {
-            flex: 1; /* Allow the table to take up available space */
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px; /* Reduce the gap between the day table and weather table */
+        }
+
+        .day-table {
+            margin-bottom: 0; /* Remove extra margin below the day table */
+        }
+
+        #weather-table {
+            margin-top: 0; /* Remove extra margin above the weather table */
+            background-color: rgba(0, 0, 0, 1)
         }
 
         .nav-button {
@@ -412,15 +385,16 @@
         }
         .sidebar {
             position: fixed;
-            top: 30%;
+            top: 28%;
             right: -50px; /* Move the sidebar to the right */
             width: 200px;
             height: 100%;
-            background-color: #222;
-            color: white;
+            background-color: transparent; /* Make the sidebar background completely transparent */
+            color: #ccc; /* Light gray text */
             display: flex;
             flex-direction: column;
             padding: 20px;
+            box-shadow: none; /* Remove any shadow for the sidebar */
         }
 
         .sidebar nav ul {
@@ -430,25 +404,24 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px; /* Add spacing between buttons */
+            gap: 25px; /* Add spacing between buttons */
         }
 
         .sidebar nav ul li a {
-            color: white;
+            color: #ccc; /* Light gray text for icons */
             text-decoration: none;
-            font-size: 1.5rem; /* Keep the font size for the dash */
+            font-size: 1.5rem; /* Icon size */
             display: flex;
             align-items: center;
             justify-content: center;
             width: 40px; /* Adjust width for smaller button */
             height: 40px; /* Adjust height for smaller button */
             border-radius: 50%; /* Make the button circular */
-            background-color: #222; /* Match the sidebar background */
-            transition: background-color 0.3s, transform 0.3s; /* Add hover transition */
+            background-color: transparent; /* Make the button background completely transparent */
+            transition: transform 0.3s; /* Add hover transition */
         }
 
         .sidebar nav ul li a:hover {
-            background-color: #444; /* Change background color on hover */
             transform: scale(1.1); /* Slightly enlarge on hover */
         }
 
@@ -477,18 +450,33 @@
         html {
             scroll-behavior: smooth; /* Enable smooth scrolling */
         }
+
+        #weather-table {
+            transform: scale(0.8); /* Scale the table to 80% of its original size */
+            transform-origin: center; /* Ensure scaling happens from the center */
+        }
+
+        .day-table {
+            transform: scale(0.8); /* Scale the day table as well */
+            transform-origin: center; /* Ensure scaling happens from the center */
+        }
+
+        .weather-container h2 {
+            color: #ff4d4d; /* Set the heading color to match the accent color */
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.8), 0 0 20px rgba(255, 77, 77, 0.6); /* Add a glow effect */
+        }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <nav>
             <ul>
-                <li><a href="#clock-section">-</a></li>
-                <li><a href="#settings-section">-</a></li>
-                <li><a href="#stopwatch-section">-</a></li>
-                <li><a href="#timer-section">-</a></li>
-                <li><a href="#weather-section">-</a></li>
-                <li><a href="#contact-section">-</a></li>
+                <li><a href="#clock-section"><i class="fas fa-clock"></i></a></li>
+                <li><a href="#settings-section"><i class="fas fa-list"></i></a></li>
+                <li><a href="#stopwatch-section"><i class="fas fa-stopwatch"></i></a></li>
+                <li><a href="#timer-section"><i class="fas fa-hourglass-half"></i></a></li>
+                <li><a href="#weather-section"><i class="fas fa-cloud"></i></a></li>
+                <li><a href="#contact-section"><i class="fas fa-phone"></i></a></li>
             </ul>
         </nav>
     </div>
@@ -533,13 +521,6 @@
                             <span class="slider"></span>
                         </label>
                         <span>Use 24-Hour Format</span>
-                    </div>
-                    <div class="toggle-item">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="toggle-theme" />
-                            <span class="slider"></span>
-                        </label>
-                        <span>Light Theme</span>
                     </div>
                 </div>
             </div>
@@ -652,9 +633,6 @@
         }
     </style>
     <script>
-        document.getElementById('toggle-theme').addEventListener('change', function () {
-        document.body.classList.toggle('light-theme', this.checked);
-      });
         let showMilliseconds = false;
         let showCentiseconds = false;
         let showDeciseconds = false;
@@ -695,7 +673,6 @@
             displayDay(currentDayIndex); // Re-render the weather table with the updated format
         });
 
-
         function updateClock() {
             let now = new Date();
             let date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -731,6 +708,32 @@
         }
 
         updateClock();
+
+        // Remove light theme toggle functionality
+        document.addEventListener('keydown', (event) => {
+            const key = event.key.toLowerCase(); // Ensure case-insensitivity
+
+            if (key === 'm') {
+                const millisecondsCheckbox = document.getElementById('show-milliseconds');
+                if (!millisecondsCheckbox.checked) {
+                    millisecondsCheckbox.checked = true; // Toggle milliseconds on
+                    millisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            } else if (key === 'c') {
+                const centisecondsCheckbox = document.getElementById('show-centiseconds');
+                if (!centisecondsCheckbox.checked) {
+                    centisecondsCheckbox.checked = true; // Toggle centiseconds on
+                    centisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            } else if (key === 'd') {
+                const decisecondsCheckbox = document.getElementById('show-deciseconds');
+                if (!decisecondsCheckbox.checked) {
+                    decisecondsCheckbox.checked = true; // Toggle deciseconds on
+                    decisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
+                }
+            }
+        });
+
         let stopwatchInterval;
         let elapsedTime = 0;
         let stopwatchState = 'reset'; // Possible states: 'reset', 'running', 'paused'
@@ -998,37 +1001,12 @@
             displayDay(currentDayIndex);
         });
 
-        document.addEventListener('keydown', (event) => {
-            const key = event.key.toLowerCase(); // Ensure case-insensitivity
-
-            if (key === 'm') {
-                const millisecondsCheckbox = document.getElementById('show-milliseconds');
-                if (!millisecondsCheckbox.checked) {
-                    millisecondsCheckbox.checked = true; // Toggle milliseconds on
-                    millisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
-                }
-            } else if (key === 'c') {
-                const centisecondsCheckbox = document.getElementById('show-centiseconds');
-                if (!centisecondsCheckbox.checked) {
-                    centisecondsCheckbox.checked = true; // Toggle centiseconds on
-                    centisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
-                }
-            } else if (key === 'd') {
-                const decisecondsCheckbox = document.getElementById('show-deciseconds');
-                if (!decisecondsCheckbox.checked) {
-                    decisecondsCheckbox.checked = true; // Toggle deciseconds on
-                    decisecondsCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
-                }
-            } else if (key === 'l') {
-                const themeCheckbox = document.getElementById('toggle-theme');
-                themeCheckbox.checked = !themeCheckbox.checked; // Toggle the checkbox state
-                themeCheckbox.dispatchEvent(new Event('change')); // Trigger the change event
-            }
-        });
-
         let timerInterval;
+        let lastInputTime = 300; // Default to 5 minutes (300 seconds)
         let timerTime = 300; // Timer starts at 5 minutes (300 seconds)
+        const MAX_TIME = 604800 * 60; // Maximum time in seconds (7 days)
         let timerState = 'reset'; // Possible states: 'reset', 'running', 'paused'
+        let isEditingTimer = false;
 
         const timerDisplay = document.getElementById('timer-display');
         const startTimerButton = document.getElementById('start-timer');
@@ -1036,9 +1014,10 @@
         const resetTimerButton = document.getElementById('reset-timer');
 
         function formatTimerTime(seconds) {
-            const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const hours = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            const minutes = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
             const secs = String(seconds % 60).padStart(2, '0');
-            return `${minutes}:${secs}`;
+            return `${hours}:${minutes}:${secs}`;
         }
 
         function updateTimerDisplay() {
@@ -1088,17 +1067,12 @@
         resetTimerButton.addEventListener('click', () => {
             timerState = 'reset';
             clearInterval(timerInterval);
-            timerTime = 300; // Reset to 5 minutes
+            timerTime = lastInputTime; // Reset to the last input value
             updateTimerDisplay();
             startTimerButton.disabled = false;
             pauseTimerButton.disabled = true;
             resetTimerButton.disabled = true;
         });
-
-        // Initialize the timer display
-        updateTimerDisplay();
-
-        let isEditingTimer = false;
 
         // Handle double-click to change timer display to input
         timerDisplay.addEventListener('dblclick', () => {
@@ -1106,13 +1080,13 @@
 
             isEditingTimer = true;
             const currentTime = timerDisplay.textContent;
-            const [minutes, seconds] = currentTime.split(':').map(Number);
+            const [hours, minutes, seconds] = currentTime.split(':').map(Number);
 
             // Create an input element
             const input = document.createElement('input');
             input.type = 'text';
-            input.value = `${minutes}:${seconds.toString().padStart(2, '0')}`; // Pre-fill with current time
-            input.style.width = '80px';
+            input.value = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; // Pre-fill with current time
+            input.style.width = '120px';
             input.style.fontSize = '2rem';
             input.style.textAlign = 'center';
 
@@ -1124,18 +1098,31 @@
             // Handle Enter key to save the input value
             input.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
-                    const [newMinutes, newSeconds] = input.value.split(':').map(Number);
+                    const inputValue = input.value.trim();
+                    const timeParts = inputValue.split(':').map(Number);
+
+                    // Validate input format
                     if (
-                        !isNaN(newMinutes) &&
-                        !isNaN(newSeconds) &&
-                        newMinutes >= 0 &&
-                        newSeconds >= 0 &&
-                        newSeconds < 60
+                        timeParts.length === 3 &&
+                        timeParts.every((part) => !isNaN(part)) &&
+                        timeParts[0] >= 0 &&
+                        timeParts[1] >= 0 &&
+                        timeParts[1] < 60 &&
+                        timeParts[2] >= 0 &&
+                        timeParts[2] < 60
                     ) {
-                        timerTime = newMinutes * 60 + newSeconds; // Update timer time
-                        updateTimerDisplay();
+                        const [newHours, newMinutes, newSeconds] = timeParts;
+                        const totalSeconds = newHours * 3600 + newMinutes * 60 + newSeconds;
+
+                        if (totalSeconds <= MAX_TIME) {
+                            timerTime = totalSeconds; // Update timer time
+                            lastInputTime = timerTime; // Save the last input value
+                            updateTimerDisplay();
+                        } else {
+                            alert(`Time exceeds the maximum limit of 7 days.`);
+                        }
                     } else {
-                        alert('Please enter a valid time in the format MM:SS.');
+                        alert(`Please enter a valid time in the format HH:MM:SS.`);
                     }
 
                     // Restore the timer display
@@ -1152,6 +1139,9 @@
                 }
             });
         });
+
+        // Initialize the timer display
+        updateTimerDisplay();
 
         function scrollToSection(sectionId) {
             const section = document.querySelector(sectionId);
